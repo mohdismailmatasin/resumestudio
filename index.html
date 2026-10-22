@@ -1,0 +1,3576 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" data-ui="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Resume Studio</title>
+<meta name="description" content="Professional resume builder with ATS-safe templates, ATS checker, live preview, 1.27cm margin PDF export, and dark mode.">
+<meta property="og:title" content="Resume Studio">
+<meta property="og:description" content="Professional resume builder with ATS-safe templates, ATS checker, live preview, 1.27cm margin PDF export, and dark mode.">
+<style>
+/* ============ DESIGN TOKENS (RESUME STUDIOS THEME - DARK DEFAULT) ============ */
+:root {
+  --radius: 8px;
+  color-scheme: dark;
+  --surface-0: #1f1e1d;
+  --surface-1: #262624;
+  --surface-2: #30302e;
+  --text-primary: #faf9f5;
+  --text-secondary: #c2c0b6;
+  --text-muted: #9c9a92;
+  --border: rgba(222,220,209,.15);
+  --border-strong: rgba(222,220,209,.3);
+  --text-accent: #85B7EB;
+  --bg-accent: #0C447C;
+  --fill-accent: #378ADD;
+  --on-accent: #ffffff;
+  --text-success: #C0DD97;
+  --bg-success: #27500A;
+  --fill-success: #97C459;
+  --text-warning: #FAC775;
+  --bg-warning: #633806;
+  --bg-danger: #5A1A1A;
+  --text-danger: #F3A6A6;
+
+  /* Mappings to support all adapted component tokens */
+  --ui-bg: var(--surface-0);
+  --ui-panel: var(--surface-2);
+  --ui-panel-2: var(--surface-1);
+  --ui-text: var(--text-primary);
+  --ui-text-dim: var(--text-secondary);
+  --ui-border: var(--border);
+  --ui-accent: var(--fill-accent, var(--text-accent));
+  --ui-accent-hover: var(--text-accent);
+  --ui-accent-soft: var(--bg-accent);
+  --ui-gold: var(--text-warning);
+  --ui-danger: var(--text-danger);
+  --ui-danger-soft: var(--bg-danger);
+  --ui-focus: var(--text-accent);
+  --shadow-1: 0 1px 3px rgba(0,0,0,.3);
+  --shadow-2: 0 4px 16px rgba(0,0,0,.45);
+}
+
+:root[data-theme="light"], :root[data-ui="light"], body[data-ui="light"] {
+  color-scheme: light;
+  --surface-0: #f5f4ee;
+  --surface-1: #f0eee6;
+  --surface-2: #ffffff;
+  --text-primary: #141413;
+  --text-secondary: #5e5d59;
+  --text-muted: #87867f;
+  --border: rgba(31,30,29,.15);
+  --border-strong: rgba(31,30,29,.3);
+  --text-accent: #185FA5;
+  --bg-accent: #E6F1FB;
+  --fill-accent: #2f7fd0;
+  --on-accent: #ffffff;
+  --text-success: #3B6D11;
+  --bg-success: #EAF3DE;
+  --fill-success: #639922;
+  --text-warning: #854F0B;
+  --bg-warning: #FAEEDA;
+  --bg-danger: #FBE4E4;
+  --text-danger: #A32D2D;
+  --shadow-1: 0 1px 3px rgba(0,0,0,.06);
+  --shadow-2: 0 4px 16px rgba(0,0,0,.1);
+}
+
+:root[data-theme="dark"], :root[data-ui="dark"], body[data-ui="dark"] {
+  color-scheme: dark;
+  --surface-0: #1f1e1d;
+  --surface-1: #262624;
+  --surface-2: #30302e;
+  --text-primary: #faf9f5;
+  --text-secondary: #c2c0b6;
+  --text-muted: #9c9a92;
+  --border: rgba(222,220,209,.15);
+  --border-strong: rgba(222,220,209,.3);
+  --text-accent: #85B7EB;
+  --bg-accent: #0C447C;
+  --fill-accent: #378ADD;
+  --on-accent: #ffffff;
+  --text-success: #C0DD97;
+  --bg-success: #27500A;
+  --fill-success: #97C459;
+  --text-warning: #FAC775;
+  --bg-warning: #633806;
+  --bg-danger: #5A1A1A;
+  --text-danger: #F3A6A6;
+  --shadow-1: 0 1px 3px rgba(0,0,0,.3);
+  --shadow-2: 0 4px 16px rgba(0,0,0,.45);
+}
+
+/* ============ RESET & BASE ============ */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  margin: 0;
+  padding: 16px;
+  background: var(--surface-0);
+  color: var(--text-primary);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+button, input, select, textarea {
+  font: inherit;
+  color: inherit;
+}
+button {
+  cursor: pointer;
+  background: transparent;
+  border: 0.5px solid var(--border-strong);
+  border-radius: var(--radius);
+  padding: 0 12px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: background .15s, border-color .15s, filter .15s;
+}
+button:hover { filter: brightness(.95); }
+button.pri, .btn-primary {
+  background: var(--fill-accent, var(--text-accent)) !important;
+  color: var(--on-accent, #fff) !important;
+  border-color: transparent !important;
+}
+button.pri:hover, .btn-primary:hover {
+  filter: brightness(.92) !important;
+}
+.btn-danger {
+  color: var(--text-danger) !important;
+  border-color: var(--text-danger) !important;
+}
+.btn-danger:hover {
+  background: var(--bg-danger) !important;
+}
+.btn-icon {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  font-size: 15px;
+  color: var(--text-secondary);
+}
+.btn-icon:hover {
+  background: var(--surface-1);
+  color: var(--text-primary);
+}
+.btn-xs {
+  height: 24px;
+  padding: 0 8px;
+  font-size: 11.5px;
+}
+.btn-sm {
+  height: 28px;
+  padding: 0 10px;
+  font-size: 12px;
+}
+
+input[type=text], input[type=email], select, textarea {
+  background: var(--surface-2);
+  border: 0.5px solid var(--border-strong);
+  border-radius: var(--radius);
+  padding: 6px 10px;
+  font-size: 13px;
+  width: 100%;
+  color: var(--text-primary);
+}
+textarea:focus-visible, input:focus-visible, select:focus-visible, [tabindex]:focus-visible, button:focus-visible {
+  outline: 2px solid var(--text-accent);
+  outline-offset: 2px;
+}
+
+/* ============ APP SHELL ============ */
+.app {
+  background: var(--surface-2);
+  border: 0.5px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  font-size: 13px;
+  color: var(--text-primary);
+  max-width: 1360px;
+  margin: 0 auto;
+  box-shadow: 0 4px 20px rgba(0,0,0,.06);
+}
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 14px;
+  height: 52px;
+  border-bottom: 0.5px solid var(--border);
+  background: var(--surface-2);
+  flex-wrap: wrap;
+}
+.brand-badge {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  background: var(--fill-accent, var(--text-accent));
+  color: var(--on-accent, #fff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  flex: none;
+}
+.brand-title {
+  font-weight: 600;
+  font-size: 14px;
+  margin-right: 4px;
+}
+.profile-select-wrapper select {
+  height: 30px;
+  padding: 2px 8px;
+  font-size: 12.5px;
+  font-weight: 500;
+  background: var(--surface-1);
+  border: 0.5px solid var(--border-strong);
+  border-radius: var(--radius);
+  cursor: pointer;
+  max-width: 240px;
+}
+.tb-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.tb-sep {
+  width: 1px;
+  height: 20px;
+  background: var(--border);
+  margin: 0 4px;
+}
+.grow { flex: 1; }
+
+.save-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--fill-success, var(--text-success));
+}
+.save-status.dirty .status-dot {
+  background: var(--text-warning);
+}
+
+.ats-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--bg-success);
+  color: var(--text-success);
+  cursor: pointer;
+  transition: transform .1s, filter .15s;
+}
+.ats-chip:hover {
+  filter: brightness(.95);
+  transform: translateY(-1px);
+}
+.ats-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.body {
+  display: grid;
+  grid-template-columns: 360px minmax(0, 1fr);
+  min-height: calc(100vh - 80px);
+}
+@media (max-width: 900px) {
+  body { padding: 6px; }
+  .body { grid-template-columns: 1fr !important; }
+  .side { border-right: 0 !important; border-bottom: 0.5px solid var(--border); max-height: none !important; }
+}
+
+.side {
+  border-right: 0.5px solid var(--border);
+  background: var(--surface-2);
+  overflow-y: auto;
+  max-height: calc(100vh - 80px);
+}
+.tabs {
+  display: flex;
+  padding: 0 8px;
+  border-bottom: 0.5px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: var(--surface-2);
+  z-index: 10;
+}
+.tab {
+  padding: 12px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  border-bottom: 2px solid transparent;
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  cursor: pointer;
+  margin-bottom: -0.5px;
+  transition: color .15s, border-color .15s;
+}
+.tab:hover { color: var(--text-primary); }
+.tab.on {
+  color: var(--text-primary);
+  border-bottom-color: var(--fill-accent, var(--text-accent));
+}
+.panel { padding: 14px; }
+
+/* ============ PREVIEW & TOOLBAR ============ */
+.pv {
+  background: var(--surface-0);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  max-height: calc(100vh - 80px);
+}
+.ptool {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: var(--surface-2);
+  border-bottom: 0.5px solid var(--border);
+  font-size: 12px;
+  color: var(--text-secondary);
+  flex: none;
+  flex-wrap: wrap;
+}
+.preview-stage {
+  flex: 1;
+  overflow: auto;
+  padding: 24px 16px;
+  display: flex;
+  justify-content: center;
+  background: var(--surface-0);
+}
+
+/* ============ ACCORDIONS & FORMS ============ */
+.acc {
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+.acc summary {
+  padding: 10px 12px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+  background: var(--surface-1);
+  color: var(--text-primary);
+  list-style: none;
+}
+.acc summary::-webkit-details-marker { display: none; }
+.acc summary .chev {
+  font-size: 11px;
+  color: var(--text-muted);
+  transition: transform .15s ease;
+}
+.acc[open] summary .chev { transform: rotate(90deg); }
+.acc-body {
+  padding: 12px;
+  background: var(--surface-2);
+}
+.field {
+  margin-bottom: 10px;
+}
+.field label {
+  display: block;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+.row2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.hint {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin: 4px 0 0;
+  line-height: 1.4;
+}
+
+/* ============ ITEM CARDS (EXPERIENCE, EDUCATION, ETC) ============ */
+.item-card {
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px;
+  margin-bottom: 10px;
+  background: var(--surface-1);
+}
+.item-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.mini-actions {
+  display: flex;
+  gap: 4px;
+}
+.mini-actions button {
+  height: 24px;
+  padding: 0 6px;
+  font-size: 11px;
+}
+
+/* ============ SECTION TOGGLE LIST (REORDER / SHOW / HIDE) ============ */
+.section-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  background: var(--surface-1);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 6px;
+}
+.sec-title-input {
+  flex: 1;
+  font-size: 12px;
+  padding: 4px 8px;
+  background: var(--surface-2);
+  border: 0.5px solid var(--border-strong);
+  border-radius: 4px;
+}
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 34px;
+  height: 20px;
+  flex: none;
+}
+.switch input { opacity: 0; width: 0; height: 0; }
+.track {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: var(--border-strong);
+  transition: .15s;
+  border-radius: 20px;
+}
+.knob {
+  position: absolute;
+  content: "";
+  height: 14px;
+  width: 14px;
+  left: 3px;
+  bottom: 3px;
+  background-color: var(--surface-2);
+  transition: .15s;
+  border-radius: 50%;
+}
+.switch input:checked + .track {
+  background-color: var(--fill-accent, var(--text-accent));
+}
+.switch input:checked + .track .knob {
+  transform: translateX(14px);
+}
+
+/* ============ TEMPLATES GRID ============ */
+.template-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.template-card {
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px;
+  text-align: center;
+  cursor: pointer;
+  background: var(--surface-2);
+  transition: border-color .15s;
+}
+.template-card:hover {
+  border-color: var(--text-accent);
+}
+.template-card.active {
+  border-color: var(--fill-accent, var(--text-accent));
+  background: var(--bg-accent);
+}
+.template-card .swatch {
+  height: 38px;
+  border-radius: 4px;
+  margin-bottom: 6px;
+}
+.template-card .label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.template-card .badge {
+  font-size: 9.5px;
+  font-weight: 700;
+  color: var(--text-success);
+}
+
+/* ============ PHOTO ADJUSTER ============ */
+.photo-adjust-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.photo-frame {
+  width: 150px;
+  height: 150px;
+  background: var(--surface-1);
+  border: 1.5px dashed var(--border-strong);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  cursor: grab;
+  touch-action: none;
+}
+.photo-frame:active {
+  cursor: grabbing;
+}
+.photo-frame.shape-circle { border-radius: 50%; }
+.photo-frame.shape-square { border-radius: 12px; }
+.photo-frame img {
+  position: absolute;
+  pointer-events: none;
+}
+.empty-msg {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 10px;
+}
+.photo-controls {
+  width: 100%;
+}
+
+/* ============ ATS CHECKER & KEYWORDS ============ */
+.ats-report {
+  margin-top: 12px;
+}
+.ats-score-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--surface-1);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 12px;
+}
+.ats-score-num {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.ats-checklist {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 12px;
+}
+.ats-check-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  padding: 5px 0;
+  border-bottom: 0.5px solid var(--border);
+}
+.ats-check-icon {
+  font-weight: 700;
+  font-size: 13px;
+}
+.ats-check-pass { color: var(--text-success); }
+.ats-check-fail { color: var(--text-danger); }
+.kw-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin: 6px 0 10px;
+}
+.kw-chip {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  cursor: pointer;
+  border: 0.5px solid var(--border);
+}
+.kw-chip.matched {
+  background: var(--bg-success);
+  color: var(--text-success);
+}
+.kw-chip.missing {
+  background: var(--bg-warning);
+  color: var(--text-warning);
+}
+
+/* Keyword highlight on document */
+.ats-kw-highlight {
+  background-color: #fef08a !important;
+  color: #854d0e !important;
+  padding: 0 2px;
+  border-radius: 2px;
+}
+
+/* Banner */
+.banner {
+  display: none;
+  background: var(--bg-warning);
+  color: var(--text-warning);
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  font-size: 12px;
+  margin: 10px 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.banner.show { display: flex; }
+
+/* Toast */
+.toast-msg {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--text-primary);
+  color: var(--surface-0);
+  padding: 8px 18px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 500;
+  opacity: 0;
+  transition: opacity .2s ease;
+  pointer-events: none;
+  z-index: 9999;
+  box-shadow: 0 4px 12px rgba(0,0,0,.2);
+}
+.toast-msg.show { opacity: 1; }
+
+.file-hidden { display: none; }
+
+/* ============ RESUME DOCUMENT THEMES & PRINT STYLING ============ */
+/* ============ RESUME DOCUMENT ============ */
+.resume-page{
+  background:#fff;color:#1a1a1a;box-shadow:var(--shadow-2);position:relative;flex:none;
+  width:210mm;min-height:297mm;transform-origin:top center;
+}
+.resume-page.pagesize-letter{width:8.5in;min-height:11in}
+.doc-header{display:flex;gap:18px;align-items:center;padding:26px 34px}
+.doc-header .doc-photo-slot{flex:none;overflow:hidden;position:relative;background:var(--surface-1,#e4e4e4);cursor:grab;touch-action:none;user-select:none;}
+.doc-header .doc-photo-slot:active{cursor:grabbing;}
+.doc-header .doc-photo-slot.shape-circle{border-radius:50%}
+.doc-header .doc-photo-slot.shape-square{border-radius:8px}
+.doc-header .doc-photo-slot img{position:absolute;max-width:none;max-height:none}
+.doc-name{font-family:var(--doc-h-font,Arial,sans-serif);font-weight:700;line-height:1.15;margin:0 0 4px}
+.doc-title{font-family:var(--doc-b-font,Arial,sans-serif);font-weight:600;margin:0 0 10px;opacity:.92}
+.doc-contact-line{font-family:var(--doc-b-font,Arial,sans-serif);display:flex;flex-wrap:wrap;gap:4px 14px;font-size:11.3px;opacity:.9}
+.doc-body{padding:20px 34px 34px;font-family:var(--doc-b-font,Arial,sans-serif);font-size:12px;line-height:1.5;color:#20262c}
+.doc-cols{display:flex;gap:26px}
+.doc-col-left{width:32%;flex:none}
+.doc-col-right{flex:1;min-width:0}
+.doc-sec{margin-bottom:16px}
+.doc-sec-h{
+  font-family:var(--doc-h-font,Arial,sans-serif);font-weight:700;font-size:13.5px;margin:0 0 8px;
+  color:var(--doc-accent,#152238);
+}
+.doc-sub{font-family:var(--doc-h-font,Arial,sans-serif);font-weight:700;font-size:12.3px;color:#20262c;margin:0}
+.doc-meta{font-size:11px;color:#57626c;margin:1px 0 5px}
+.doc-bullets, .doc-plain-list{margin:4px 0 0;padding:0;list-style:none !important}
+.doc-bullets li, .doc-plain-list li, .doc-bullet-item{
+  position:relative;padding-left:14px;margin-bottom:3px;list-style:none !important;
+}
+.doc-bullet-marker{
+  position:absolute;left:0;top:0;width:12px;font-size:12px;line-height:inherit;
+  color:currentColor;user-select:none;pointer-events:none;
+}
+.doc-bullet-text{display:block}
+.doc-bullets li strong, .doc-plain-list li strong, .doc-bullet-text strong{font-weight:700;color:#111827}
+.doc-entry{margin-bottom:12px}
+.doc-entry:last-child{margin-bottom:0}
+.doc-group-h{font-size:11.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#57626c;margin:10px 0 6px;border-bottom:1px solid #e1e1e1;padding-bottom:3px}
+.doc-group-h:first-child{margin-top:0}
+.doc-pill-list{display:flex;flex-wrap:wrap;gap:5px;margin-top:2px}
+.doc-pill{background:var(--doc-pill-bg,#152238);color:var(--doc-pill-text,#fff);font-size:10.6px;font-weight:600;padding:3px 9px;border-radius:20px}
+.doc-refs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+
+/* --- Justified body text (like MS Word's Justify) --- */
+.resume-page.justify-body .doc-sec p,
+.resume-page.justify-body .doc-bullets li,
+.resume-page.justify-body .doc-plain-list li,
+.resume-page.justify-body .doc-bullet-text{
+  text-align:justify;text-align-last:left;-webkit-text-align-last:left;
+  hyphens:none;-webkit-hyphens:none;-ms-hyphens:none;word-spacing:normal;
+}
+
+/* --- Spacing density presets --- */
+.resume-page.spacing-compact .doc-header{padding:16px 24px}
+.resume-page.spacing-compact .doc-body{padding:10px 24px 20px;line-height:1.36;font-size:11.2px}
+.resume-page.spacing-compact .doc-sec{margin-bottom:9px}
+.resume-page.spacing-compact .doc-sec-h{margin:0 0 5px;font-size:12.5px}
+.resume-page.spacing-compact .doc-entry{margin-bottom:7px}
+.resume-page.spacing-compact .doc-bullets li{margin-bottom:1.5px}
+.resume-page.spacing-compact .doc-group-h{margin:6px 0 3px}
+
+.resume-page.spacing-relaxed .doc-header{padding:32px 38px}
+.resume-page.spacing-relaxed .doc-body{padding:24px 38px 38px;line-height:1.58;font-size:12.4px}
+.resume-page.spacing-relaxed .doc-sec{margin-bottom:20px}
+.resume-page.spacing-relaxed .doc-sec-h{margin:0 0 10px;font-size:14px}
+.resume-page.spacing-relaxed .doc-entry{margin-bottom:15px}
+.resume-page.spacing-relaxed .doc-bullets li{margin-bottom:4.5px}
+
+/* --- Page break boundary guides --- */
+.doc-page-break{
+  position:absolute;left:-24px;right:-24px;height:0;z-index:40;pointer-events:none;
+  display:none;align-items:center;
+}
+.resume-page.has-page-guides .doc-page-break{display:flex}
+.doc-page-break-line{flex:1;border-top:1.5px dashed #2563eb;opacity:.75}
+.doc-page-break-badge{
+  background:#2563eb;color:#fff;font-size:9.5px;font-weight:800;letter-spacing:.04em;
+  padding:2px 8px;border-radius:4px;box-shadow:0 2px 6px rgba(37,99,235,.35);
+  margin-left:8px;white-space:nowrap;text-transform:uppercase;
+}
+
+/* ============ ATS-SAFE THEMES (100% Single-Column Linear Parsing) ============ */
+.theme-minimal-mono .doc-cols,
+.theme-ats-executive .doc-cols,
+.theme-ats-tech .doc-cols,
+.theme-ats-editorial .doc-cols,
+.theme-ats-nordic .doc-cols{flex-direction:column}
+
+.theme-minimal-mono .doc-col-left, .theme-minimal-mono .doc-col-right,
+.theme-ats-executive .doc-col-left, .theme-ats-executive .doc-col-right,
+.theme-ats-tech .doc-col-left, .theme-ats-tech .doc-col-right,
+.theme-ats-editorial .doc-col-left, .theme-ats-editorial .doc-col-right,
+.theme-ats-nordic .doc-col-left, .theme-ats-nordic .doc-col-right{width:100%}
+
+/* --- 1. ATS Minimal Mono --- */
+.theme-minimal-mono{--doc-h-font:Arial,Helvetica,sans-serif;--doc-b-font:Arial,Helvetica,sans-serif;--doc-accent:#111827}
+.theme-minimal-mono .doc-header{background:#fff;color:#111827;border-bottom:2px solid #111827;padding-bottom:16px}
+.theme-minimal-mono .doc-name{font-size:24px;font-weight:700;letter-spacing:-.01em}
+.theme-minimal-mono .doc-title{font-weight:500;color:#374151}
+.theme-minimal-mono .doc-sec-h{text-transform:uppercase;letter-spacing:.05em;border-bottom:1.5px solid #111827;padding-bottom:4px;color:#111827;font-size:13px}
+.theme-minimal-mono .doc-pill{background:#fff;color:#111827;border:1px solid #9ca3af;border-radius:3px}
+
+/* --- 2. ATS Modern Executive --- */
+.theme-ats-executive{--doc-h-font:Georgia,'Times New Roman',serif;--doc-b-font:Georgia,'Times New Roman',serif;--doc-accent:#15325B}
+.theme-ats-executive .doc-header{background:#fff;color:#15325B;border-bottom:2.5px solid #15325B;padding-bottom:16px}
+.theme-ats-executive .doc-name{font-size:26px;font-weight:700;letter-spacing:.01em;color:#15325B}
+.theme-ats-executive .doc-title{font-weight:600;color:#334155;letter-spacing:.02em}
+.theme-ats-executive .doc-sec-h{text-transform:uppercase;letter-spacing:.06em;border-bottom:1.5px solid #15325B;padding-bottom:4px;color:#15325B;font-size:13.5px}
+.theme-ats-executive .doc-sub{font-weight:700;color:#0F172A}
+.theme-ats-executive .doc-pill{background:#F1F5F9;color:#15325B;border:1px solid #CBD5E1;border-radius:4px;font-weight:600}
+
+/* --- 3. ATS Modern Tech & Product --- */
+.theme-ats-tech{--doc-h-font:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--doc-b-font:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--doc-accent:#0F766E}
+.theme-ats-tech .doc-header{background:#fff;color:#0F172A;border-bottom:2px solid #E2E8F0;padding-bottom:16px}
+.theme-ats-tech .doc-name{font-size:25px;font-weight:800;letter-spacing:-.02em;color:#0F172A}
+.theme-ats-tech .doc-title{font-weight:600;color:#0F766E;font-size:13.5px}
+.theme-ats-tech .doc-sec-h{text-transform:uppercase;letter-spacing:.05em;border-left:3.5px solid #0F766E;padding-left:8px;border-bottom:none;color:#0F766E;font-size:12.5px;font-weight:800}
+.theme-ats-tech .doc-sub{font-weight:700;color:#0F172A}
+.theme-ats-tech .doc-pill{background:#F0FDFA;color:#0F766E;border:1px solid #99F6E4;border-radius:4px;font-weight:600}
+
+/* --- 4. ATS Classic Editorial --- */
+.theme-ats-editorial{--doc-h-font:Garamond,Georgia,'Times New Roman',serif;--doc-b-font:Garamond,Georgia,'Times New Roman',serif;--doc-accent:#2C3E50}
+.theme-ats-editorial .doc-header{background:#fff;color:#1E293B;border-bottom:1.5px solid #2C3E50;padding-bottom:16px;flex-direction:column;text-align:center;justify-content:center}
+.theme-ats-editorial .doc-header > div{display:flex;flex-direction:column;align-items:center;width:100%}
+.theme-ats-editorial .doc-name{font-size:26px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#1E293B}
+.theme-ats-editorial .doc-title{font-weight:500;font-style:italic;color:#475569;margin-bottom:6px}
+.theme-ats-editorial .doc-contact-line{justify-content:center}
+.theme-ats-editorial .doc-sec-h{text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid #2C3E50;padding-bottom:3px;color:#2C3E50;font-size:13px;font-weight:700}
+.theme-ats-editorial .doc-sub{font-weight:700;color:#1E293B}
+.theme-ats-editorial .doc-pill{background:#F8FAFC;color:#1E293B;border:1px solid #CBD5E1;border-radius:3px}
+
+/* --- 5. ATS Nordic Clean --- */
+.theme-ats-nordic{--doc-h-font:"Trebuchet MS","Lucida Grande","Segoe UI",sans-serif;--doc-b-font:Arial,Helvetica,sans-serif;--doc-accent:#334155}
+.theme-ats-nordic .doc-header{background:#fff;color:#1E293B;border-bottom:1.5px solid #CBD5E1;padding-bottom:16px}
+.theme-ats-nordic .doc-name{font-size:24px;font-weight:700;letter-spacing:.02em;color:#0F172A}
+.theme-ats-nordic .doc-title{font-weight:500;color:#64748B}
+.theme-ats-nordic .doc-sec-h{text-transform:uppercase;letter-spacing:.08em;border-bottom:1.5px solid #64748B;padding-bottom:4px;color:#334155;font-size:12px;font-weight:700}
+.theme-ats-nordic .doc-sub{font-weight:700;color:#0F172A}
+.theme-ats-nordic .doc-pill{background:#F1F5F9;color:#334155;border:1px solid #E2E8F0;border-radius:14px;font-weight:600}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width:900px){
+  .layout{flex-direction:column}
+  .editor-panel{width:100%;max-width:none;height:46vh;resize:none;border-right:none;border-bottom:1px solid var(--ui-border)}
+  .preview-panel{height:54vh}
+}
+
+/* ============ EXPORT PDF & PRINT (1.27cm MARGINS) ============ */
+.resume-page.is-exporting-pdf{
+  box-shadow:none !important;
+  transform:none !important;
+  margin:0 !important;
+  min-height:0 !important;
+  background:#fff !important;
+}
+.resume-page.is-exporting-pdf.pagesize-a4{
+  width:184.6mm !important;
+  max-width:184.6mm !important;
+}
+.resume-page.is-exporting-pdf.pagesize-letter{
+  width:7.5in !important;
+  max-width:7.5in !important;
+}
+.resume-page.is-exporting-pdf .doc-header{
+  padding-left:0 !important;
+  padding-right:0 !important;
+  padding-top:0 !important;
+  padding-bottom:16px !important;
+}
+.resume-page.is-exporting-pdf .doc-body{
+  padding-left:0 !important;
+  padding-right:0 !important;
+  padding-top:14px !important;
+  padding-bottom:0 !important;
+}
+.resume-page.is-exporting-pdf .doc-page-break{
+  display:none !important;
+}
+
+@media print{
+  @page{
+    margin:1.27cm !important;
+  }
+  :root, :root[data-ui="dark"], [data-ui="dark"]{
+    --ui-bg:#ffffff !important;
+    --ui-panel:#ffffff !important;
+    --ui-panel-2:#ffffff !important;
+    --ui-border:transparent !important;
+    --shadow-1:none !important;
+    --shadow-2:none !important;
+  }
+  html, body{
+    background:#ffffff !important;
+    background-color:#ffffff !important;
+    color:#000000 !important;
+    overflow:visible !important;
+    height:auto !important;
+    min-height:100% !important;
+    margin:0 !important;
+    padding:0 !important;
+    -webkit-print-color-adjust:exact !important;
+    print-color-adjust:exact !important;
+  }
+  #app, .layout, .preview-panel, .preview-stage{
+    display:block !important;
+    background:#ffffff !important;
+    background-color:#ffffff !important;
+    color:#000000 !important;
+    height:auto !important;
+    min-height:100% !important;
+    max-width:none !important;
+    width:100% !important;
+    margin:0 !important;
+    padding:0 !important;
+    border:none !important;
+    box-shadow:none !important;
+    -webkit-box-shadow:none !important;
+    overflow:visible !important;
+  }
+  .topbar, .editor-panel, .preview-toolbar, .toast-msg, .doc-page-break, .doc-page-break *, .preview-kw-badge{
+    display:none !important;
+    visibility:hidden !important;
+  }
+  .resume-page, [data-ui="dark"] .resume-page{
+    box-shadow:none !important;
+    -webkit-box-shadow:none !important;
+    filter:none !important;
+    transform:none !important;
+    margin:0 !important;
+    padding:0 !important;
+    background:#ffffff !important;
+    background-color:#ffffff !important;
+    border:none !important;
+    outline:none !important;
+  }
+  .resume-page.pagesize-a4{
+    width:100% !important;
+    max-width:184.6mm !important;
+    min-height:calc(297mm - 2.54cm) !important;
+  }
+  .resume-page.pagesize-letter{
+    width:100% !important;
+    max-width:7.5in !important;
+    min-height:calc(11in - 2.54cm) !important;
+  }
+  .doc-header{
+    padding-left:0 !important;
+    padding-right:0 !important;
+    padding-top:0 !important;
+    padding-bottom:16px !important;
+    background:#ffffff !important;
+  }
+  .doc-body{
+    padding-left:0 !important;
+    padding-right:0 !important;
+    padding-top:14px !important;
+    padding-bottom:0 !important;
+    background:#ffffff !important;
+  }
+  .doc-entry{page-break-inside:avoid;break-inside:avoid}
+  .doc-group-h{page-break-after:avoid;break-after:avoid}
+  .doc-sec-h{page-break-after:avoid;break-after:avoid}
+  .ats-kw-highlight{background:transparent !important;color:inherit !important;box-shadow:none !important;padding:0 !important;animation:none !important}
+  * {-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+
+/* ============ RESUME STUDIO PROFESSIONAL UI ============ */
+:root{
+  --ui-bg:#eef2f5;
+  --ui-panel:#ffffff;
+  --ui-panel-2:#f7f9fb;
+  --ui-text:#182230;
+  --ui-text-dim:#657181;
+  --ui-border:#d9e0e7;
+  --ui-accent:#2563eb;
+  --ui-accent-hover:#1d4ed8;
+  --ui-accent-soft:#e8f0ff;
+  --ui-gold:#b8892f;
+  --shadow-1:0 1px 2px rgba(15,23,42,.06);
+  --shadow-2:0 14px 40px rgba(15,23,42,.12);
+}
+[data-ui="dark"]{
+  --ui-bg:#0b1118;
+  --ui-panel:#111923;
+  --ui-panel-2:#17212d;
+  --ui-text:#edf3f8;
+  --ui-text-dim:#9aa9b8;
+  --ui-border:#273544;
+  --ui-accent:#60a5fa;
+  --ui-accent-hover:#93c5fd;
+  --ui-accent-soft:#172b45;
+  --ui-gold:#d7ad55;
+  --shadow-1:0 1px 2px rgba(0,0,0,.3);
+  --shadow-2:0 16px 44px rgba(0,0,0,.55);
+}
+body{letter-spacing:.005em}
+.topbar{
+  min-height:64px;padding:10px 20px;
+  background:var(--ui-panel);
+  border-bottom:1px solid var(--ui-border);
+}
+.brand{gap:10px;font-size:16px;letter-spacing:-.01em}.brand span:last-child{display:inline-block}.brand:after{content:"PROFESSIONAL RESUME BUILDER";font-size:8px;letter-spacing:.12em;color:var(--ui-text-dim);font-weight:700;margin-left:2px}
+.brand .mark{
+  width:32px;height:32px;border-radius:9px;
+  display:grid;place-items:center;
+  background:linear-gradient(135deg,#2563eb,#7c3aed);
+  color:#fff;font-size:10px;font-weight:900;letter-spacing:.04em;
+  box-shadow:0 5px 14px rgba(37,99,235,.25);
+}
+.btn{
+  border-radius:9px;padding:8px 12px;
+  transition:transform .12s,box-shadow .12s,background .12s,border-color .12s;
+}
+.btn:hover{transform:translateY(-1px);box-shadow:0 3px 10px rgba(15,23,42,.08)}
+.btn-primary{box-shadow:0 4px 12px rgba(37,99,235,.2)}
+select,.ipt,.field input[type=text],.field input[type=email],.field input[type=tel],.field textarea{
+  border-radius:9px;
+}
+.layout{background:var(--ui-bg)}
+.editor-panel{
+  width:440px;padding:18px 16px 70px;
+  background:var(--ui-panel);
+}
+.preview-panel{background:var(--ui-bg)}
+.preview-toolbar{
+  min-height:52px;padding:9px 18px;
+  background:rgba(255,255,255,.92);
+  backdrop-filter:blur(10px);
+}
+[data-ui="dark"] .preview-toolbar{background:rgba(17,25,35,.92)}
+details.acc{
+  border-radius:12px;margin-bottom:11px;
+  box-shadow:var(--shadow-1);
+}
+details.acc>summary{
+  padding:13px 14px;font-size:13.5px;
+}
+.acc-body{padding:4px 14px 15px}
+.item-card{
+  border-radius:11px;
+  box-shadow:0 1px 2px rgba(15,23,42,.04);
+}
+.tpl-opt{
+  border-radius:11px;padding:9px;
+  transition:transform .12s,box-shadow .12s,border-color .12s;
+}
+.tpl-opt:hover{transform:translateY(-1px);box-shadow:0 5px 14px rgba(15,23,42,.07)}
+.tpl-opt.active{box-shadow:0 0 0 3px var(--ui-accent-soft),0 6px 18px rgba(37,99,235,.10)}
+.preview-stage{padding:34px 24px 70px}
+.resume-page{box-shadow:0 18px 50px rgba(15,23,42,.18)}
+[data-ui="dark"] .resume-page{box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.status-text{font-size:12px}
+.ats-chip{border-radius:999px;padding:6px 11px}
+
+.section-toggle-row .sec-title-input{
+  flex:1;min-width:0;background:var(--ui-panel-2);border:1px solid var(--ui-border);
+  border-radius:6px;padding:3px 8px;font-size:12px;font-weight:600;color:var(--ui-text);
+  font-family:inherit;
+}
+.section-toggle-row .sec-title-input:focus{
+  border-color:var(--ui-accent);outline:none;background:#fff;
+}
+.toast-msg{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:rgba(15,23,42,0.92);color:#fff;font-size:13px;font-weight:600;
+  padding:8px 18px;border-radius:24px;box-shadow:0 8px 24px rgba(0,0,0,.22);
+  z-index:9999;opacity:0;pointer-events:none;transition:all .2s ease;
+}
+.toast-msg.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+
+</style>
+</head>
+<body data-ui="dark">
+<div class="app">
+  <!-- ============ TOPBAR ============ -->
+  <div class="bar">
+    <div class="brand-badge">RS</div>
+    <span class="brand-title">Resume Studio</span>
+    <div class="tb-group">
+      <div class="profile-select-wrapper">
+        <select id="profileSelect" title="Switch resume profile"></select>
+      </div>
+      <button class="btn btn-icon" id="btnNewProfile" title="New blank resume">＋</button>
+      <button class="btn btn-icon" id="btnDupProfile" title="Duplicate this resume">⧉</button>
+      <button class="btn btn-icon" id="btnRenProfile" title="Rename this resume">✎</button>
+      <button class="btn btn-icon btn-danger" id="btnDelProfile" title="Delete this resume">🗑</button>
+    </div>
+    <div class="tb-sep"></div>
+    <div class="save-status" id="saveStatus">
+      <span class="status-dot" id="dirtyIndicator"></span>
+      <span class="status-text" id="statusText">Saved</span>
+    </div>
+    <button class="btn btn-sm" id="btnSaveNow" title="Save immediately">💾 Save</button>
+
+    <div class="grow"></div>
+
+    <div class="ats-chip" id="atsChip" title="Overall ATS-friendliness score — click to open ATS tab">
+      <span class="ats-dot" id="atsDot"></span>
+      <span id="atsScoreVal">ATS —</span>
+    </div>
+    <div class="tb-sep"></div>
+    <button class="btn" id="btnImport" title="Import resume (.json file)">Import</button>
+    <button class="btn" id="btnExport" title="Export resume backup (.json file)">Export</button>
+    <button class="btn btn-primary" id="expPdf" title="Download resume as PDF">Download PDF</button>
+    <button class="btn btn-icon" id="btnUiTheme" title="Toggle light / dark app appearance">🌓</button>
+  </div>
+
+  <div style="padding:0 14px">
+    <div class="banner" id="storageBanner">
+      <span>⚠ Local saving is unavailable in this browser — export a backup often to preserve your changes.</span>
+      <button class="btn btn-sm" id="bannerExport">Export now</button>
+    </div>
+  </div>
+
+  <!-- ============ MAIN SPLIT BODY ============ -->
+  <div class="body">
+    <!-- ---------- SIDEBAR WITH TABS ---------- -->
+    <aside class="side" id="editorPanel">
+      <div class="tabs" role="tablist">
+        <div class="tab on" role="tab" tabindex="0" aria-selected="true" id="tabContentBtn">Content</div>
+        <div class="tab" role="tab" tabindex="0" aria-selected="false" id="tabDesignBtn">Design</div>
+        <div class="tab" role="tab" tabindex="0" aria-selected="false" id="tabAtsBtn">ATS</div>
+      </div>
+
+      <!-- PANEL: CONTENT -->
+      <div class="panel" role="tabpanel" id="panelContent">
+        <details class="acc">
+        <summary>Photo <span class="chev">▶</span></summary>
+        <div class="acc-body">
+          <div class="photo-adjust-wrap">
+            <div class="photo-frame shape-circle" id="photoFrame">
+              <div class="empty-msg" id="photoEmptyMsg">Upload a photo, then drag to reposition &amp; scroll to zoom</div>
+              <img id="photoImg" style="display:none">
+            </div>
+            <div class="photo-controls">
+              <div class="field"><label>Upload photo</label>
+                <button class="btn btn-sm" id="btnUploadPhoto">Choose image…</button>
+                <button class="btn btn-sm btn-danger" id="btnRemovePhoto">Remove</button>
+              </div>
+              <div class="field"><label>Frame shape</label>
+                <select data-bind="photo.shape">
+                  <option value="circle">Circle</option>
+                  <option value="square">Rounded square</option>
+                </select>
+              </div>
+              <div class="field"><label>Zoom</label>
+                <input type="range" id="zoomSlider" min="100" max="400" value="100">
+              </div>
+              <div class="field">
+                <label>Position: Left ⟷ Right</label>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <input type="range" id="photoPosXSlider" min="-100" max="100" value="0" style="flex:1" title="Adjust horizontal photo position">
+                  <span id="photoPosXVal" style="font-size:11.5px;color:var(--ui-text-dim);width:34px;text-align:right">0%</span>
+                </div>
+              </div>
+              <div class="field">
+                <label>Position: Up ⟷ Down</label>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <input type="range" id="photoPosYSlider" min="-100" max="100" value="0" style="flex:1" title="Adjust vertical photo position">
+                  <span id="photoPosYVal" style="font-size:11.5px;color:var(--ui-text-dim);width:34px;text-align:right">0%</span>
+                </div>
+              </div>
+              <div class="field" style="margin-bottom:6px">
+                <label>Nudge &amp; Align</label>
+                <div style="display:flex;gap:4px;flex-wrap:wrap">
+                  <button type="button" class="btn btn-xs" id="btnPhotoLeft" title="Nudge photo left">⬅ Left</button>
+                  <button type="button" class="btn btn-xs" id="btnPhotoCenter" title="Center photo">⊙ Center</button>
+                  <button type="button" class="btn btn-xs" id="btnPhotoRight" title="Nudge photo right">Right ➡</button>
+                  <button type="button" class="btn btn-xs" id="btnPhotoUp" title="Nudge photo up">⬆ Up</button>
+                  <button type="button" class="btn btn-xs" id="btnPhotoDown" title="Nudge photo down">⬇ Down</button>
+                  <button type="button" class="btn btn-xs" id="btnPhotoReset" title="Reset zoom and position">↺ Reset</button>
+                </div>
+              </div>
+              <p class="hint">Drag the photo in the frame or on the resume preview to reposition freely (left, right, up, down). Scroll to zoom. Double-click to reset.</p>
+            </div>
+          </div>
+        </div>
+      </details><details class="acc" open>
+        <summary>Contact details <span class="chev">▶</span></summary>
+        <div class="acc-body">
+          <div class="field"><label>Full name</label><input type="text" data-bind="contact.fullName"></div>
+          <div class="field"><label>Title / headline</label><input type="text" data-bind="contact.title"></div>
+          <div class="row2">
+            <div class="field"><label>Phone</label><input type="text" data-bind="contact.phone"></div>
+            <div class="field"><label>Email</label><input type="text" data-bind="contact.email"></div>
+          </div>
+          <div class="field"><label>Location</label><input type="text" data-bind="contact.location"></div>
+          <div class="field"><label>LinkedIn (optional)</label><input type="text" data-bind="contact.linkedin"></div>
+        </div>
+      </details><details class="acc" open>
+        <summary>Professional summary <span class="chev">▶</span></summary>
+        <div class="acc-body">
+          <div class="field"><textarea data-bind="summary" rows="5" placeholder="3-4 sentences on your experience, strengths and what you're aiming for."></textarea></div>
+          <p class="hint" id="summaryHint"></p>
+        </div>
+      </details><details class="acc" open>
+        <summary>Experience <span class="chev">▶</span></summary>
+        <div class="acc-body" id="experienceList"></div>
+      </details><details class="acc">
+        <summary>Education <span class="chev">▶</span></summary>
+        <div class="acc-body" id="educationList"></div>
+      </details><details class="acc">
+        <summary>Skills <span class="chev">▶</span></summary>
+        <div class="acc-body" id="skillsList"></div>
+      </details><details class="acc">
+        <summary>Certifications &amp; awards <span class="chev">▶</span></summary>
+        <div class="acc-body" id="certsList"></div>
+      </details><details class="acc">
+        <summary>References <span class="chev">▶</span></summary>
+        <div class="acc-body" id="refsList"></div>
+      </details><details class="acc">
+        <summary>Custom sections <span class="chev">▶</span></summary>
+        <div class="acc-body" id="customList"></div>
+      </details>
+      </div>
+
+      <!-- PANEL: DESIGN -->
+      <div class="panel" role="tabpanel" id="panelDesign" style="display:none">
+        <details class="acc" open>
+        <summary>Layout &amp; Template <span class="chev">▶</span></summary>
+        <div class="acc-body">
+          <label style="font-size:12px;font-weight:600;color:var(--ui-text-dim);display:block;margin-bottom:6px">Document template</label>
+          <div class="template-grid" id="templateGrid"></div>
+          <div class="row2">
+            <div class="field" style="margin-bottom:0">
+              <label>Page size</label>
+              <select data-bind="pageSize">
+                <option value="a4">A4</option>
+                <option value="letter">US Letter</option>
+              </select>
+            </div>
+            <div class="field" style="margin-bottom:0">
+              <label>Show photo</label>
+              <select data-bind="showPhoto">
+                <option value="true">Yes</option>
+                <option value="false">No (safest for ATS)</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label>Body text alignment</label>
+            <select data-bind="textAlign">
+              <option value="left">Left-aligned</option>
+              <option value="justify">Justified</option>
+            </select>
+            <p class="hint">Justified text lines up cleanly on both edges, like Word's Justify button. The last line of each paragraph or bullet stays left-aligned, same as Word's default.</p>
+          </div>
+          <div class="field" id="fieldFontFamily">
+            <label id="labelFontFamily">Base font family</label>
+            <select data-bind="fontFamily" id="selectFontFamily">
+              <option value="sans-serif">Sans-Serif</option>
+              <option value="serif">Serif</option>
+              <option value="modern-mono">Modern-Mono</option>
+              <option value="system-ui">System UI</option>
+              <option value="template">Match Active Template Style</option>
+            </select>
+            <p class="hint">Updates the typography CSS variables (<code>--doc-b-font</code> and <code>--doc-h-font</code>) across the resume while preserving ATS-Safe machine readability.</p>
+          </div>
+          <div class="row2">
+            <div class="field" style="margin-bottom:0">
+              <label>Spacing density</label>
+              <select data-bind="spacing" id="selectSpacing">
+                <option value="compact">Compact (Fit more)</option>
+                <option value="standard">Standard (Balanced)</option>
+                <option value="relaxed">Relaxed (Spacious)</option>
+              </select>
+            </div>
+            <div class="field" style="margin-bottom:0">
+              <label>Auto-fit page</label>
+              <div style="display:flex;gap:4px">
+                <button type="button" class="btn btn-sm" id="btnFit1" style="flex:1" title="Automatically adjust spacing to fit cleanly on 1 page">Fit 1P</button>
+                <button type="button" class="btn btn-sm" id="btnFit2" style="flex:1" title="Automatically adjust spacing to fit cleanly on 2 pages">Fit 2P</button>
+                <button type="button" class="btn btn-sm" id="btnFit3" style="flex:1" title="Automatically adjust spacing to fit cleanly on 3 pages">Fit 3P</button>
+              </div>
+            </div>
+          </div>
+          <p class="hint">Every template strictly maintains a 100% ATS-Safe linear single-column structure for seamless parsing across Workday, Taleo, Greenhouse, Lever, etc., paired with distinct professional and modern typographic styles.</p>
+          <label style="font-size:12px;font-weight:600;color:var(--ui-text-dim);display:block;margin:12px 0 4px">Sections — show, hide &amp; reorder</label>
+          <div id="sectionToggleList"></div>
+        </div>
+      </details>
+      </div>
+
+      <!-- PANEL: ATS -->
+      <div class="panel" role="tabpanel" id="panelAts" style="display:none">
+        <details class="acc">
+        <summary>ATS checker <span class="chev">▶</span></summary>
+        <div class="acc-body">
+          <p class="hint">Paste a job description below to see how well your resume's wording matches it, plus a general ATS health check.</p>
+          <div class="field"><textarea id="jdInput" rows="5" placeholder="Paste the job posting text here (optional)…"></textarea></div>
+          <button class="btn btn-primary btn-sm" id="btnAtsCheck">Run ATS check</button>
+          <div class="ats-report" id="atsReport"></div>
+        </div>
+      </details>
+      </div>
+    </aside>
+
+    <!-- ---------- PREVIEW STAGE & TOOLBAR ---------- -->
+    <section class="pv">
+      <div class="ptool">
+        <span style="font-weight:600;color:var(--text-primary)">Preview</span>
+        <div class="tb-sep"></div>
+        <span>Zoom</span>
+        <input type="range" id="previewZoom" min="40" max="130" value="85" style="width:90px">
+        <div id="previewKwBadge" class="preview-kw-badge" style="display:none"></div>
+        <div class="tb-sep"></div>
+        <button type="button" class="btn btn-xs" id="btnToggleGuides" title="Toggle print cut-off guidelines">📄 Guides: ON</button>
+        <button type="button" class="btn btn-xs" id="btnTbFit1" title="Auto-tune spacing to fit 1 page">⚡ Fit 1P</button>
+        <button type="button" class="btn btn-xs" id="btnTbFit2" title="Auto-tune spacing to fit 2 pages">⚡ Fit 2P</button>
+        <button type="button" class="btn btn-xs" id="btnTbFit3" title="Auto-tune spacing to fit 3 pages">⚡ Fit 3P</button>
+        <span id="pageCountBadge" style="font-weight:600;padding:2px 7px;border-radius:4px;border:0.5px solid var(--border);background:var(--surface-1)">1 Page</span>
+        <div class="grow"></div>
+        <span id="wordCountText" style="font-size:11.5px;color:var(--text-secondary)"></span>
+      </div>
+
+      <div class="preview-stage">
+        <div id="resumePage" class="resume-page theme-minimal-mono pagesize-a4"></div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<div id="toastMsg" class="toast-msg"></div>
+<input type="file" id="photoFileInput" class="file-hidden" accept="image/*">
+<input type="file" id="jsonFileInput" class="file-hidden" accept="application/json,.json">
+
+<!-- Vendor html2pdf.js bundle with CDN fallback -->
+<script src="/vendor/html2pdf.bundle.min.js"></script>
+<script>
+if(typeof html2pdf === "undefined"){
+  var s = document.createElement("script");
+  s.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
+  document.head.appendChild(s);
+}
+</script>
+
+<!-- App logic -->
+<script>
+
+(function(){
+"use strict";
+
+/* ================= CONSTANTS ================= */
+var UI_KEY = "rb_ui_v2";
+var ADJ_FRAME = 150; // px, editor adjuster frame reference size
+var DOC_PHOTO_SIZE = 92; // px, photo size inside the resume document header
+var uid = function(){ return "id" + Math.random().toString(36).slice(2,9) + Date.now().toString(36).slice(-4); };
+
+var STOPWORDS = new Set(("the a an and or but if of to in on for with at by from as is are was were be been being this that these those "+
+"you your we our they their he she it its i my me us them will would could should can may might must shall not no do does did have has had "+
+"about into over under between more most other some such only own same so than too very just also into up down out off there here what which who "+
+"whom job role work team responsible responsibilities requirements requirement candidate candidates ability abilities including etc per year years "+
+"experience experienced strong good excellent using use used within across including require required preferred plus new all any each every any").split(" "));
+
+var TEMPLATES = [
+  {id:"minimal-mono", label:"ATS Minimal Mono", layout:"linear", swatch:"linear-gradient(135deg,#111827,#4b5563)", badge:"ATS-SAFE"},
+  {id:"ats-executive", label:"ATS Executive Navy", layout:"linear", swatch:"linear-gradient(135deg,#15325B,#2563EB)", badge:"ATS-SAFE"},
+  {id:"ats-tech", label:"ATS Modern Tech", layout:"linear", swatch:"linear-gradient(135deg,#0F766E,#14B8A6)", badge:"ATS-SAFE"},
+  {id:"ats-editorial", label:"ATS Classic Editorial", layout:"linear", swatch:"linear-gradient(135deg,#2C3E50,#64748B)", badge:"ATS-SAFE"},
+  {id:"ats-nordic", label:"ATS Nordic Clean", layout:"linear", swatch:"linear-gradient(135deg,#334155,#94A3B8)", badge:"ATS-SAFE"}
+];
+
+var SECTION_LABELS = {
+  summary:"Professional Summary", experience:"Experience", education:"Education",
+  skills:"Skills", certifications:"Certifications & Awards", references:"References", custom:"Additional Sections"
+};
+
+/* ================= BLANK RESUME TEMPLATE ================= */
+function blankData(){
+  return {
+    template:"minimal-mono", pageSize:"a4", showPhoto:false, textAlign:"left", fontFamily:"sans-serif",
+    spacing:"standard",
+    sectionTitles:{},
+    photo:{dataUrl:null,naturalW:0,naturalH:0,shape:"circle",zoom:1,x:0,y:0},
+    contact:{fullName:"",title:"",phone:"",email:"",location:"",linkedin:""},
+    summary:"",
+    sectionsOrder:["summary","experience","education","skills","certifications","references","custom"],
+    sectionsVisible:{summary:true,experience:true,education:true,skills:true,certifications:true,references:true,custom:false},
+    experience:[],
+    education:[],
+    skillGroups:[],
+    certifications:[],
+    references:[],
+    custom:[]
+  };
+}
+
+function getSectionTitle(d, key){
+  if(d && d.sectionTitles && typeof d.sectionTitles[key] === "string" && d.sectionTitles[key].trim()){
+    return d.sectionTitles[key].trim();
+  }
+  return SECTION_LABELS[key] || key;
+}
+
+/* ================= TOAST & CLIPBOARD HELPERS ================= */
+var toastTimer = null;
+function showToast(msg){
+  var el = document.getElementById("toastMsg");
+  if(!el) return;
+  el.textContent = msg;
+  el.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ el.classList.remove("show"); }, 2200);
+}
+
+function copyTextToClipboard(text){
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).catch(function(){ fallbackCopyText(text); });
+    return;
+  }
+  fallbackCopyText(text);
+}
+
+function fallbackCopyText(text){
+  var ta = document.createElement("textarea");
+  ta.value = text;
+  ta.style.position = "fixed";
+  ta.style.left = "-9999px";
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  try{ document.execCommand("copy"); }catch(e){}
+  document.body.removeChild(ta);
+}
+
+/* ================= STATE ================= */
+var storageAvailable = true;
+try{ localStorage.setItem("__rb_test__","1"); localStorage.removeItem("__rb_test__"); }catch(e){ storageAvailable=false; }
+
+var SCHEMA_VERSION = 2;
+var STORE_KEY = "rb_profiles_v2";
+var store = { schemaVersion:SCHEMA_VERSION, activeId:null, profiles:[] };
+var uiPrefs = { theme:"dark", previewZoom:85, showPageGuides:true };
+var atsResult = null;
+var activeHighlightedKw = null;
+var atsHighlightMatchCount = 0;
+var saveTimer = null;
+
+function defaultBlankProfile(){
+  return {
+    id: "p-empty",
+    name: "Untitled Resume",
+    updatedAt: Date.now(),
+    data: blankData()
+  };
+}
+
+function isSampleProfile(p){
+  if(!p) return false;
+  if(p.id === "p-mohd") return true;
+  if(p.name && p.name.indexOf("Mohd Ismail") !== -1) return true;
+  if(!p.data || !p.data.contact) return false;
+  var c = p.data.contact;
+  if(c.fullName && c.fullName.indexOf("Mohd Ismail") !== -1) return true;
+  if(c.email && c.email.indexOf("mohdismail") !== -1) return true;
+  if(p.data.summary && (p.data.summary.indexOf("Security Operations Leader") !== -1 || p.data.summary.indexOf("Experienced security and aviation") !== -1)) return true;
+  return false;
+}
+
+function migrateOldV2(old){
+  try {
+    var p = defaultBlankProfile();
+    var d = p.data;
+    if(old.personal){
+      d.contact.fullName = old.personal.name || "";
+      d.contact.title = old.personal.title || "";
+      d.contact.phone = old.personal.phone || "";
+      d.contact.email = old.personal.email || "";
+      d.contact.location = old.personal.address || "";
+      d.contact.linkedin = old.personal.linkedin || "";
+    }
+    if(old.objective) d.summary = old.objective;
+    if(old.education && Array.isArray(old.education)){
+      d.education = old.education.map(function(e){
+        return {id:uid(), degree: e.title||"", school: e.desc||"", location:"", date: e.date||"", detail:""};
+      });
+    }
+    if(old.skills && Array.isArray(old.skills)){
+      var skNames = old.skills.map(function(s){ return typeof s === "object" ? (s.name||"") : String(s); }).filter(Boolean);
+      if(skNames.length){
+        d.skillGroups = [{id:uid(), label: "Core Competencies", itemsText: skNames.join(", ")}];
+      }
+    }
+    return p;
+  } catch(err){
+    return defaultBlankProfile();
+  }
+}
+
+function loadStore(){
+  try {
+    localStorage.removeItem("resumeBuilderV2");
+  }catch(e){}
+
+  if(!storageAvailable){
+    var defP = defaultBlankProfile();
+    store = {schemaVersion:SCHEMA_VERSION, activeId:defP.id, profiles:[defP]};
+    return;
+  }
+  try {
+    var raw = localStorage.getItem(STORE_KEY);
+    if(!raw){
+      var defaultP = defaultBlankProfile();
+      store = {schemaVersion:SCHEMA_VERSION, activeId:defaultP.id, profiles:[defaultP]};
+      persist();
+      return;
+    }
+    var parsed = JSON.parse(raw);
+    if(!parsed || !Array.isArray(parsed.profiles)){
+      parsed = {schemaVersion:SCHEMA_VERSION, activeId:null, profiles:[]};
+    }
+    // Filter out any legacy sample profiles so they never load at startup
+    parsed.profiles = parsed.profiles.filter(function(p){
+      return p && !isSampleProfile(p);
+    });
+    if(!parsed.profiles.length){
+      var defP = defaultBlankProfile();
+      parsed = {schemaVersion:SCHEMA_VERSION, activeId:defP.id, profiles:[defP]};
+    }
+    var validIds = TEMPLATES.map(function(t){return t.id;});
+    parsed.profiles.forEach(function(p){
+      if(!p.data){
+        p.data = blankData();
+      }
+      if(p.data && (!p.data.template || validIds.indexOf(p.data.template) === -1)){
+        p.data.template = TEMPLATES[0].id;
+      }
+      if(p.data && !p.data.fontFamily){
+        p.data.fontFamily = "sans-serif";
+      }
+    });
+    store = parsed;
+    var activeFound = store.profiles.some(function(p){ return p.id === store.activeId; });
+    if(!activeFound && store.profiles.length){
+      store.activeId = store.profiles[0].id;
+    }
+    persist();
+  }catch(e){
+    var fallback = defaultBlankProfile();
+    store = {schemaVersion:SCHEMA_VERSION, activeId:fallback.id, profiles:[fallback]};
+    persist();
+  }
+}
+function persist(){
+  if(!storageAvailable) return false;
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify(store)); return true; }catch(e){ return false; }
+}
+function loadUiPrefs(){
+  if(!storageAvailable) return;
+  try{
+    var raw = localStorage.getItem(UI_KEY);
+    if(raw){
+      var parsed = JSON.parse(raw);
+      if(parsed && typeof parsed === "object") uiPrefs = Object.assign(uiPrefs, parsed);
+    } else {
+      var oldRaw = localStorage.getItem("rb_ui_v1");
+      if(oldRaw){
+        try{
+          var old = JSON.parse(oldRaw);
+          if(old && typeof old === "object"){
+            if(old.previewZoom) uiPrefs.previewZoom = old.previewZoom;
+            if(old.showPageGuides !== undefined) uiPrefs.showPageGuides = old.showPageGuides;
+          }
+        }catch(eMigration){}
+      }
+    }
+  }catch(e){}
+}
+function persistUiPrefs(){ if(!storageAvailable) return; try{ localStorage.setItem(UI_KEY, JSON.stringify(uiPrefs)); }catch(e){} }
+
+function activeProfile(){
+  for(var i=0;i<store.profiles.length;i++) if(store.profiles[i].id===store.activeId) return store.profiles[i];
+  return store.profiles[0];
+}
+function activeData(){ return activeProfile().data; }
+
+var isDirtyState = false;
+
+function setDirty(val){
+  isDirtyState = !!val;
+  var dirtyEl = document.getElementById("dirtyIndicator");
+  if(dirtyEl){
+    dirtyEl.classList.toggle("show", isDirtyState);
+  }
+  var sel = document.getElementById("profileSelect");
+  if(sel){
+    var curP = activeProfile();
+    var opt = sel.querySelector('option[value="'+store.activeId+'"]');
+    if(opt && curP){
+      opt.textContent = curP.name + (isDirtyState ? " *" : "");
+    }
+  }
+}
+
+function setStatus(t, mode){
+  var el = document.getElementById("statusText");
+  if(!el) return;
+  var msgEl = el.querySelector(".status-msg");
+  if(msgEl){
+    msgEl.textContent = t;
+  } else {
+    el.innerHTML = '<span class="status-dot"></span><span class="status-msg">'+esc(t)+'</span>';
+  }
+
+  el.classList.remove("status-saved-pulse", "status-saved", "status-dirty");
+
+  if(mode === "saved"){
+    el.classList.add("status-saved");
+    void el.offsetWidth;
+    el.classList.add("status-saved-pulse");
+  } else if(mode === "saving" || mode === "dirty"){
+    el.classList.add("status-dirty");
+  }
+}
+
+function scheduleSave(){
+  setDirty(true);
+  setStatus("Saving…", "saving");
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(function(){
+    activeProfile().updatedAt = Date.now();
+    var ok = persist();
+    if(ok){
+      setDirty(false);
+      setStatus("Saved " + new Date().toLocaleTimeString([], {hour:"numeric", minute:"2-digit", second:"2-digit"}), "saved");
+    } else {
+      setStatus("Not saved — storage unavailable", "dirty");
+    }
+    updateBanner();
+  }, 450);
+}
+
+function saveNow(){
+  clearTimeout(saveTimer);
+  activeProfile().updatedAt = Date.now();
+  var ok = persist();
+  if(ok){
+    setDirty(false);
+    setStatus("Saved " + new Date().toLocaleTimeString([], {hour:"numeric", minute:"2-digit", second:"2-digit"}), "saved");
+  } else {
+    setStatus("Not saved — storage unavailable", "dirty");
+  }
+  updateBanner();
+  var btn = document.getElementById("btnSaveNow");
+  if(btn){
+    var original = btn.textContent;
+    btn.textContent = ok ? "✓ Saved" : "✕ Failed";
+    setTimeout(function(){ btn.textContent = original; }, 1200);
+  }
+  if(!ok) alert("Couldn't save — this browser's local storage is unavailable (private mode or storage disabled). Use Export ▾ → Backup file (.json) to keep your work instead.");
+}
+
+function updateBanner(){ document.getElementById("storageBanner").classList.toggle("show", !storageAvailable); }
+
+/* ================= PATH BIND HELPERS ================= */
+function getPath(obj, path){
+  var parts = path.split(".");
+  var cur = obj;
+  for(var i=0;i<parts.length;i++){ if(cur==null) return undefined; cur = cur[isNaN(parts[i])?parts[i]:parseInt(parts[i],10)]; }
+  return cur;
+}
+function setPath(obj, path, value){
+  var parts = path.split(".");
+  var cur = obj;
+  for(var i=0;i<parts.length-1;i++){ var k = isNaN(parts[i])?parts[i]:parseInt(parts[i],10); cur = cur[k]; }
+  var last = isNaN(parts[parts.length-1])?parts[parts.length-1]:parseInt(parts[parts.length-1],10);
+  cur[last] = value;
+}
+
+function esc(s){
+  s = (s==null?"":String(s));
+  return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+function nl2li(text){
+  return (text||"").split("\n").map(function(l){return l.trim();}).filter(Boolean);
+}
+
+/* ================= BULLET POINT LEAD-IN HELPER =================
+   Automatically detects and bolds common bullet point lead-ins
+   (e.g., words followed by a colon at the start of a line) to improve
+   readability for both human recruiters and ATS machine parsers. */
+function formatBulletLeadIn(line){
+  if(!line) return "";
+  var str = String(line).trim();
+
+  // Strip accidental leading bullet list symbols if entered (- , * , • )
+  var markerMatch = str.match(/^([-*•])\s+/);
+  if(markerMatch){
+    str = str.slice(markerMatch[0].length);
+  }
+
+  // Support markdown bold at line start: **Lead-In:** or **Lead-In**:
+  var mdMatch = str.match(/^\*\*([^*]+)\*\*(:?)(.*)$/);
+  if(mdMatch){
+    var mdLabel = mdMatch[1].trim() + (mdMatch[2] || "");
+    var mdRest = mdMatch[3] ? mdMatch[3].trimStart() : "";
+    return "<strong>" + esc(mdLabel) + "</strong>" + (mdRest ? " " + esc(mdRest) : "");
+  }
+
+  // Detect words followed by a colon at the start of a line/bullet
+  // E.g. "Key Achievement:", "Operations Management:", "Incident Response (24/7):"
+  // Up to 6 words / 50 characters, ensuring it doesn't match full sentence bodies.
+  var colonMatch = str.match(/^([A-Za-z0-9][A-Za-z0-9\s/&–—'#+.()\-]{0,48}?):(\s+.*)?$/);
+  if(colonMatch){
+    var leadCandidate = colonMatch[1].trim();
+    var words = leadCandidate.split(/\s+/);
+    if(words.length >= 1 && words.length <= 6 && !/[.!?]$/.test(leadCandidate)){
+      var restText = colonMatch[2] ? colonMatch[2].trim() : "";
+      return "<strong>" + esc(leadCandidate + ":") + "</strong>" + (restText ? " " + esc(restText) : "");
+    }
+  }
+
+  // Detect words followed by an em-dash or en-dash lead-in (e.g. "Key Deliverable — Achieved 99.9% uptime")
+  var dashMatch = str.match(/^([A-Za-z0-9][A-Za-z0-9\s/&'#+.()\-]{0,48}?)\s+([—–])\s+(.*)$/);
+  if(dashMatch){
+    var dashLead = dashMatch[1].trim();
+    var dashWords = dashLead.split(/\s+/);
+    if(dashWords.length >= 1 && dashWords.length <= 5 && !/[.!?]$/.test(dashLead)){
+      var dashRest = dashMatch[3].trim();
+      return "<strong>" + esc(dashLead + " " + dashMatch[2]) + "</strong>" + (dashRest ? " " + esc(dashRest) : "");
+    }
+  }
+
+  return esc(str);
+}
+
+/* ================= PHOTO MATH ================= */
+function frameMetrics(natW, natH, zoom){
+  var z = Math.max(0.5, Math.min(5, zoom || 1));
+  var w = Math.max(10, natW || 100), h = Math.max(10, natH || 100);
+  var minDim = Math.min(w, h);
+  var scale = z / minDim;
+  var dispWFrac = w * scale, dispHFrac = h * scale;
+  // Allow generous horizontal and vertical panning (at least 1.5 frame units each way)
+  // so the user can easily position their photo left, right, up, or down freely!
+  var maxXFrac = Math.max(1.5, (dispWFrac + 0.8) / 2);
+  var maxYFrac = Math.max(1.5, (dispHFrac + 0.8) / 2);
+  return {
+    dispWFrac: dispWFrac,
+    dispHFrac: dispHFrac,
+    maxXFrac: maxXFrac,
+    maxYFrac: maxYFrac
+  };
+}
+
+function clampPhoto(photo){
+  if(!photo) return;
+  var m = frameMetrics(photo.naturalW, photo.naturalH, photo.zoom);
+  photo.x = Math.max(-m.maxXFrac, Math.min(m.maxXFrac, photo.x || 0));
+  photo.y = Math.max(-m.maxYFrac, Math.min(m.maxYFrac, photo.y || 0));
+}
+
+function applyPhotoToImg(imgEl, photo, frameSizePx){
+  if(!imgEl) return;
+  if(!photo || !photo.dataUrl){ imgEl.style.display = "none"; return; }
+  if((!photo.naturalW || !photo.naturalH) && imgEl.naturalWidth && imgEl.naturalHeight){
+    photo.naturalW = imgEl.naturalWidth;
+    photo.naturalH = imgEl.naturalHeight;
+  }
+  var m = frameMetrics(photo.naturalW, photo.naturalH, photo.zoom);
+  var w = m.dispWFrac * frameSizePx, h = m.dispHFrac * frameSizePx;
+  var left = (frameSizePx - w) / 2 + (photo.x || 0) * frameSizePx;
+  var top = (frameSizePx - h) / 2 + (photo.y || 0) * frameSizePx;
+  imgEl.style.display = "block";
+  imgEl.style.width = w + "px";
+  imgEl.style.height = h + "px";
+  imgEl.style.left = left + "px";
+  imgEl.style.top = top + "px";
+  if(imgEl.src !== photo.dataUrl) imgEl.src = photo.dataUrl;
+}
+
+var dragState = null;
+var photoRAFPending = false;
+function requestPhotoLiveUpdate(){
+  if(photoRAFPending) return;
+  photoRAFPending = true;
+  requestAnimationFrame(function(){ updatePhotoLive(); photoRAFPending = false; });
+}
+
+function syncPhotoInputs(){
+  var d = activeData();
+  if(!d.photo) return;
+  var sliderX = document.getElementById("photoPosXSlider");
+  var sliderY = document.getElementById("photoPosYSlider");
+  var valX = document.getElementById("photoPosXVal");
+  var valY = document.getElementById("photoPosYVal");
+  var zoomSlider = document.getElementById("zoomSlider");
+  if(sliderX){
+    var pctX = Math.round((d.photo.x || 0) * 100);
+    sliderX.value = pctX;
+    if(valX) valX.textContent = (pctX > 0 ? "+" : "") + pctX + "%";
+  }
+  if(sliderY){
+    var pctY = Math.round((d.photo.y || 0) * 100);
+    sliderY.value = pctY;
+    if(valY) valY.textContent = (pctY > 0 ? "+" : "") + pctY + "%";
+  }
+  if(zoomSlider){
+    zoomSlider.value = Math.round((d.photo.zoom || 1) * 100);
+  }
+}
+
+function updatePhotoLive(){
+  var d = activeData();
+  var frame = document.getElementById("photoFrame");
+  var frameSize = frame ? (frame.clientWidth || ADJ_FRAME) : ADJ_FRAME;
+  applyPhotoToImg(document.getElementById("photoImg"), d.photo, frameSize);
+  var docImg = document.getElementById("docHeaderPhoto");
+  if(docImg) applyPhotoToImg(docImg, d.photo, DOC_PHOTO_SIZE);
+  syncPhotoInputs();
+}
+
+function initPhotoAdjuster(){
+  var frame = document.getElementById("photoFrame");
+  function pos(e){
+    if(e.touches && e.touches.length > 0) return {x:e.touches[0].clientX, y:e.touches[0].clientY};
+    return {x:e.clientX, y:e.clientY};
+  }
+
+  function startDrag(e, refSizePx){
+    var d = activeData();
+    if(!d.photo || !d.photo.dataUrl) return;
+    var p = pos(e);
+    dragState = {
+      startX: p.x,
+      startY: p.y,
+      ox: d.photo.x || 0,
+      oy: d.photo.y || 0,
+      refSize: refSizePx || ADJ_FRAME
+    };
+    if(frame) frame.style.cursor = "grabbing";
+    var slot = document.querySelector(".doc-photo-slot");
+    if(slot) slot.style.cursor = "grabbing";
+    e.preventDefault();
+  }
+
+  function onFrameDown(e){
+    startDrag(e, frame ? (frame.clientWidth || ADJ_FRAME) : ADJ_FRAME);
+  }
+
+  // Allow dragging photo directly on resume preview
+  var previewStage = document.querySelector(".preview-stage");
+  if(previewStage){
+    previewStage.addEventListener("mousedown", function(e){
+      var slot = e.target.closest(".doc-photo-slot");
+      if(slot){
+        var zoomFactor = (uiPrefs.previewZoom || 85) / 100;
+        var sz = (DOC_PHOTO_SIZE || 92) * zoomFactor;
+        startDrag(e, sz);
+      }
+    });
+    previewStage.addEventListener("touchstart", function(e){
+      var slot = e.target.closest(".doc-photo-slot");
+      if(slot){
+        var zoomFactor = (uiPrefs.previewZoom || 85) / 100;
+        var sz = (DOC_PHOTO_SIZE || 92) * zoomFactor;
+        startDrag(e, sz);
+      }
+    }, {passive:false});
+  }
+
+  function move(e){
+    if(!dragState) return;
+    var d = activeData();
+    var p = pos(e);
+    var sz = dragState.refSize || ADJ_FRAME;
+    var dxFrac = (p.x - dragState.startX) / sz;
+    var dyFrac = (p.y - dragState.startY) / sz;
+    d.photo.x = dragState.ox + dxFrac;
+    d.photo.y = dragState.oy + dyFrac;
+    clampPhoto(d.photo);
+    requestPhotoLiveUpdate();
+    scheduleSave();
+    e.preventDefault();
+  }
+
+  function up(){
+    if(!dragState) return;
+    dragState = null;
+    if(frame) frame.style.cursor = "grab";
+    var slot = document.querySelector(".doc-photo-slot");
+    if(slot) slot.style.cursor = "grab";
+  }
+
+  if(frame){
+    frame.addEventListener("mousedown", onFrameDown);
+    frame.addEventListener("touchstart", onFrameDown, {passive:false});
+    frame.addEventListener("dblclick", function(){
+      var d = activeData();
+      d.photo.zoom = 1; d.photo.x = 0; d.photo.y = 0;
+      clampPhoto(d.photo);
+      requestPhotoLiveUpdate();
+      scheduleSave();
+    });
+    frame.addEventListener("wheel", function(e){
+      var d = activeData();
+      if(!d.photo.dataUrl) return;
+      e.preventDefault();
+      var z = (d.photo.zoom || 1) - e.deltaY * 0.0018;
+      d.photo.zoom = Math.max(1, Math.min(4, z));
+      clampPhoto(d.photo);
+      requestPhotoLiveUpdate();
+      scheduleSave();
+    }, {passive:false});
+  }
+
+  window.addEventListener("mousemove", move);
+  window.addEventListener("mouseup", up);
+  window.addEventListener("touchmove", move, {passive:false});
+  window.addEventListener("touchend", up);
+  window.addEventListener("touchcancel", up);
+
+  var zoomSlider = document.getElementById("zoomSlider");
+  if(zoomSlider){
+    zoomSlider.addEventListener("input", function(e){
+      var d = activeData();
+      d.photo.zoom = parseFloat(e.target.value) / 100;
+      clampPhoto(d.photo);
+      requestPhotoLiveUpdate();
+      scheduleSave();
+    });
+  }
+
+  var sliderX = document.getElementById("photoPosXSlider");
+  if(sliderX){
+    sliderX.addEventListener("input", function(e){
+      var d = activeData();
+      if(!d.photo || !d.photo.dataUrl) return;
+      d.photo.x = parseFloat(e.target.value) / 100;
+      clampPhoto(d.photo);
+      requestPhotoLiveUpdate();
+      scheduleSave();
+    });
+  }
+
+  var sliderY = document.getElementById("photoPosYSlider");
+  if(sliderY){
+    sliderY.addEventListener("input", function(e){
+      var d = activeData();
+      if(!d.photo || !d.photo.dataUrl) return;
+      d.photo.y = parseFloat(e.target.value) / 100;
+      clampPhoto(d.photo);
+      requestPhotoLiveUpdate();
+      scheduleSave();
+    });
+  }
+
+  function nudgePhoto(dx, dy){
+    var d = activeData();
+    if(!d.photo || !d.photo.dataUrl) return;
+    d.photo.x = (d.photo.x || 0) + dx;
+    d.photo.y = (d.photo.y || 0) + dy;
+    clampPhoto(d.photo);
+    requestPhotoLiveUpdate();
+    scheduleSave();
+  }
+
+  var btnL = document.getElementById("btnPhotoLeft");
+  if(btnL) btnL.addEventListener("click", function(){ nudgePhoto(-0.05, 0); });
+  var btnR = document.getElementById("btnPhotoRight");
+  if(btnR) btnR.addEventListener("click", function(){ nudgePhoto(0.05, 0); });
+  var btnU = document.getElementById("btnPhotoUp");
+  if(btnU) btnU.addEventListener("click", function(){ nudgePhoto(0, -0.05); });
+  var btnD = document.getElementById("btnPhotoDown");
+  if(btnD) btnD.addEventListener("click", function(){ nudgePhoto(0, 0.05); });
+  var btnC = document.getElementById("btnPhotoCenter");
+  if(btnC) btnC.addEventListener("click", function(){
+    var d = activeData();
+    if(!d.photo || !d.photo.dataUrl) return;
+    d.photo.x = 0; d.photo.y = 0;
+    requestPhotoLiveUpdate();
+    scheduleSave();
+  });
+  var btnReset = document.getElementById("btnPhotoReset");
+  if(btnReset) btnReset.addEventListener("click", function(){
+    var d = activeData();
+    if(!d.photo || !d.photo.dataUrl) return;
+    d.photo.zoom = 1; d.photo.x = 0; d.photo.y = 0;
+    requestPhotoLiveUpdate();
+    scheduleSave();
+  });
+
+  document.getElementById("btnUploadPhoto").addEventListener("click", function(){
+    document.getElementById("photoFileInput").click();
+  });
+  document.getElementById("btnRemovePhoto").addEventListener("click", function(){
+    var d = activeData();
+    d.photo = {dataUrl:null, naturalW:0, naturalH:0, shape:d.photo.shape||"circle", zoom:1, x:0, y:0};
+    refreshPhotoDisplays();
+    scheduleSave();
+    renderAtsChipOnly();
+  });
+  document.getElementById("photoFileInput").addEventListener("change", function(e){
+    var file = e.target.files[0];
+    if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(ev){
+      var url = ev.target.result;
+      var img = new Image();
+      img.onload = function(){
+        var d = activeData();
+        d.photo.dataUrl = url;
+        d.photo.naturalW = img.naturalWidth;
+        d.photo.naturalH = img.naturalHeight;
+        d.photo.zoom = 1;
+        d.photo.x = 0;
+        d.photo.y = 0;
+        d.showPhoto = true; // Auto enable photo on resume document
+        var showPhotoSel = document.querySelector('select[data-bind="showPhoto"]');
+        if(showPhotoSel) showPhotoSel.value = "true";
+        refreshPhotoDisplays();
+        scheduleSave();
+        renderAtsChipOnly();
+        showToast("Photo uploaded — drag to adjust position");
+      };
+      img.src = url;
+    };
+    reader.readAsDataURL(file);
+    e.target.value = "";
+  });
+}
+
+function refreshPhotoDisplays(){
+  var d = activeData();
+  var frame = document.getElementById("photoFrame");
+  if(frame) frame.className = "photo-frame shape-" + (d.photo.shape || "circle");
+  var emptyMsg = document.getElementById("photoEmptyMsg");
+  if(emptyMsg) emptyMsg.style.display = (d.photo && d.photo.dataUrl) ? "none" : "flex";
+  var frameSize = frame ? (frame.clientWidth || ADJ_FRAME) : ADJ_FRAME;
+  applyPhotoToImg(document.getElementById("photoImg"), d.photo, frameSize);
+  syncPhotoInputs();
+  renderPreview();
+}
+
+
+/* ================= EDITOR RENDER ================= */
+function bindAttr(path){ return 'data-bind="'+path+'"'; }
+
+function renderTemplateGrid(){
+  var d = activeData();
+  var grid = document.getElementById("templateGrid");
+  grid.innerHTML = TEMPLATES.map(function(t){
+    return '<div class="tpl-opt '+(d.template===t.id?"active":"")+'" data-tpl="'+t.id+'">'+
+      (t.badge?'<span class="badge">'+t.badge+'</span>':'')+
+      '<div class="swatch" style="background:'+t.swatch+'"></div>'+
+      '<div class="lbl">'+t.label+'</div></div>';
+  }).join("");
+  Array.prototype.forEach.call(grid.querySelectorAll(".tpl-opt"), function(el){
+    el.addEventListener("click", function(){
+      activeData().template = el.getAttribute("data-tpl");
+      renderTemplateGrid(); renderPreview(); scheduleSave();
+    });
+  });
+}
+
+function renderSectionToggles(){
+  var d = activeData();
+  d.sectionTitles = d.sectionTitles || {};
+  var wrap = document.getElementById("sectionToggleList");
+  wrap.innerHTML = d.sectionsOrder.map(function(key,i){
+    var title = d.sectionTitles[key] !== undefined ? d.sectionTitles[key] : SECTION_LABELS[key];
+    return '<div class="section-toggle-row" data-key="'+key+'">'+
+      '<div class="mini-actions">'+
+        '<button type="button" data-act="up" '+(i===0?"disabled":"")+' title="Move up">↑</button>'+
+        '<button type="button" data-act="down" '+(i===d.sectionsOrder.length-1?"disabled":"")+' title="Move down">↓</button>'+
+      '</div>'+
+      '<input type="text" class="sec-title-input" data-key="'+key+'" value="'+esc(title)+'" placeholder="'+esc(SECTION_LABELS[key])+'" title="Click to customize section title">'+
+      '<label class="switch" title="Show or hide section"><input type="checkbox" data-act="vis" '+(d.sectionsVisible[key]?"checked":"")+'><span class="track"></span><span class="knob"></span></label>'+
+    '</div>';
+  }).join("");
+
+  Array.prototype.forEach.call(wrap.querySelectorAll(".sec-title-input"), function(input){
+    input.addEventListener("input", function(){
+      var key = input.getAttribute("data-key");
+      var d2 = activeData();
+      d2.sectionTitles = d2.sectionTitles || {};
+      d2.sectionTitles[key] = input.value;
+      renderPreview();
+      scheduleSave();
+    });
+  });
+
+  Array.prototype.forEach.call(wrap.querySelectorAll("[data-act]"), function(btn){
+    btn.addEventListener(btn.tagName==="INPUT"?"change":"click", function(){
+      var row = btn.closest(".section-toggle-row"), key = row.getAttribute("data-key");
+      var d2 = activeData(); var idx = d2.sectionsOrder.indexOf(key);
+      var act = btn.getAttribute("data-act");
+      if(act==="up" && idx>0){ var tmp=d2.sectionsOrder[idx-1]; d2.sectionsOrder[idx-1]=d2.sectionsOrder[idx]; d2.sectionsOrder[idx]=tmp; renderSectionToggles(); }
+      else if(act==="down" && idx<d2.sectionsOrder.length-1){ var tmp2=d2.sectionsOrder[idx+1]; d2.sectionsOrder[idx+1]=d2.sectionsOrder[idx]; d2.sectionsOrder[idx]=tmp2; renderSectionToggles(); }
+      else if(act==="vis"){ d2.sectionsVisible[key] = btn.checked; }
+      renderPreview(); scheduleSave();
+    });
+  });
+}
+
+function renderExperienceList(){
+  var d = activeData();
+  var wrap = document.getElementById("experienceList");
+  wrap.innerHTML = d.experience.map(function(exp,i){
+    return '<div class="item-card" data-i="'+i+'">'+
+      '<div class="item-card-head"><span class="tag">Position '+(i+1)+'</span>'+
+        '<div class="mini-actions">'+
+          '<button data-act="up" '+(i===0?"disabled":"")+'>↑</button>'+
+          '<button data-act="down" '+(i===d.experience.length-1?"disabled":"")+'>↓</button>'+
+          '<button data-act="del">✕</button>'+
+        '</div></div>'+
+      '<div class="field"><label>Job title</label><input type="text" '+bindAttr("experience."+i+".title")+' value="'+esc(exp.title)+'"></div>'+
+      '<div class="row2">'+
+        '<div class="field"><label>Company</label><input type="text" '+bindAttr("experience."+i+".company")+' value="'+esc(exp.company)+'"></div>'+
+        '<div class="field"><label>Location</label><input type="text" '+bindAttr("experience."+i+".location")+' value="'+esc(exp.location)+'"></div>'+
+      '</div>'+
+      '<div class="row2">'+
+        '<div class="field"><label>Start date</label><input type="text" '+bindAttr("experience."+i+".start")+' value="'+esc(exp.start)+'"></div>'+
+        '<div class="field"><label>End date</label><input type="text" '+bindAttr("experience."+i+".end")+' value="'+esc(exp.end)+'" '+(exp.current?"disabled":"")+'></div>'+
+      '</div>'+
+      '<label class="check-row"><input type="checkbox" data-act="current" '+(exp.current?"checked":"")+'> Currently working here</label>'+
+      '<div class="field"><label>Group label (optional — e.g. "Military Experience")</label><input type="text" '+bindAttr("experience."+i+".group")+' value="'+esc(exp.group)+'" placeholder="Leave blank for a single Experience list"></div>'+
+      '<div class="field"><label>Bullet points (one per line)</label><textarea rows="5" '+bindAttr("experience."+i+".bulletsText")+'>'+esc(exp.bulletsText)+'</textarea>'+
+        '<p class="hint">Start each with a clear achievement or lead-in (e.g. <em>Key Achievement:</em>). Words ending with a colon at the beginning of a line are automatically bolded for better human scannability and ATS structure.</p></div>'+
+    '</div>';
+  }).join("") + '<div class="add-row"><button class="btn btn-sm btn-primary" id="addExp">+ Add position</button></div>';
+  wireItemCardActions(wrap, "experience", function(arr,i,act){
+    if(act==="current"){ arr[i].current = !arr[i].current; if(arr[i].current) arr[i].end="Present"; renderExperienceList(); renderPreview(); scheduleSave(); }
+  });
+  document.getElementById("addExp").addEventListener("click", function(){
+    activeData().experience.push({id:uid(),group:"",title:"",company:"",location:"",start:"",end:"",current:false,bulletsText:""});
+    renderExperienceList(); renderPreview(); scheduleSave();
+  });
+}
+
+function renderEducationList(){
+  var d = activeData();
+  var wrap = document.getElementById("educationList");
+  wrap.innerHTML = d.education.map(function(ed,i){
+    return '<div class="item-card" data-i="'+i+'">'+
+      '<div class="item-card-head"><span class="tag">Education '+(i+1)+'</span>'+
+        '<div class="mini-actions"><button data-act="up" '+(i===0?"disabled":"")+'>↑</button><button data-act="down" '+(i===d.education.length-1?"disabled":"")+'>↓</button><button data-act="del">✕</button></div></div>'+
+      '<div class="field"><label>Degree / qualification</label><input type="text" '+bindAttr("education."+i+".degree")+' value="'+esc(ed.degree)+'"></div>'+
+      '<div class="row2"><div class="field"><label>School</label><input type="text" '+bindAttr("education."+i+".school")+' value="'+esc(ed.school)+'"></div>'+
+      '<div class="field"><label>Location</label><input type="text" '+bindAttr("education."+i+".location")+' value="'+esc(ed.location)+'"></div></div>'+
+      '<div class="row2"><div class="field"><label>Date</label><input type="text" '+bindAttr("education."+i+".date")+' value="'+esc(ed.date)+'"></div>'+
+      '<div class="field"><label>Detail (GPA, honors)</label><input type="text" '+bindAttr("education."+i+".detail")+' value="'+esc(ed.detail)+'"></div></div>'+
+    '</div>';
+  }).join("") + '<div class="add-row"><button class="btn btn-sm btn-primary" id="addEdu">+ Add education</button></div>';
+  wireItemCardActions(wrap, "education", function(){});
+  document.getElementById("addEdu").addEventListener("click", function(){
+    activeData().education.push({id:uid(),degree:"",school:"",location:"",date:"",detail:""});
+    renderEducationList(); renderPreview(); scheduleSave();
+  });
+}
+
+function renderSkillsList(){
+  var d = activeData();
+  var wrap = document.getElementById("skillsList");
+  wrap.innerHTML = d.skillGroups.map(function(g,i){
+    return '<div class="item-card" data-i="'+i+'">'+
+      '<div class="item-card-head"><span class="tag">Group '+(i+1)+'</span>'+
+        '<div class="mini-actions"><button data-act="up" '+(i===0?"disabled":"")+'>↑</button><button data-act="down" '+(i===d.skillGroups.length-1?"disabled":"")+'>↓</button><button data-act="del">✕</button></div></div>'+
+      '<div class="field"><label>Group label</label><input type="text" '+bindAttr("skillGroups."+i+".label")+' value="'+esc(g.label)+'"></div>'+
+      '<div class="field"><label>Skills (comma or new line separated)</label><textarea rows="3" '+bindAttr("skillGroups."+i+".itemsText")+'>'+esc(g.itemsText)+'</textarea></div>'+
+    '</div>';
+  }).join("") + '<div class="add-row"><button class="btn btn-sm btn-primary" id="addSkillGroup">+ Add skill group</button></div>';
+  wireItemCardActions(wrap, "skillGroups", function(){});
+  document.getElementById("addSkillGroup").addEventListener("click", function(){
+    activeData().skillGroups.push({id:uid(),label:"",itemsText:""});
+    renderSkillsList(); renderPreview(); scheduleSave();
+  });
+}
+
+function renderCertsList(){
+  var d = activeData();
+  var wrap = document.getElementById("certsList");
+  wrap.innerHTML = d.certifications.map(function(c,i){
+    return '<div class="item-card" data-i="'+i+'">'+
+      '<div class="item-card-head"><span class="tag">Item '+(i+1)+'</span>'+
+        '<div class="mini-actions"><button data-act="up" '+(i===0?"disabled":"")+'>↑</button><button data-act="down" '+(i===d.certifications.length-1?"disabled":"")+'>↓</button><button data-act="del">✕</button></div></div>'+
+      '<div class="field"><label>Title</label><input type="text" '+bindAttr("certifications."+i+".title")+' value="'+esc(c.title)+'"></div>'+
+      '<div class="field"><label>Issuer</label><input type="text" '+bindAttr("certifications."+i+".issuer")+' value="'+esc(c.issuer)+'"></div>'+
+      '<div class="row2"><div class="field"><label>Date</label><input type="text" '+bindAttr("certifications."+i+".date")+' value="'+esc(c.date)+'"></div>'+
+      '<div class="field"><label>Reference # (optional)</label><input type="text" '+bindAttr("certifications."+i+".ref")+' value="'+esc(c.ref)+'"></div></div>'+
+    '</div>';
+  }).join("") + '<div class="add-row"><button class="btn btn-sm btn-primary" id="addCert">+ Add certification / award</button></div>';
+  wireItemCardActions(wrap, "certifications", function(){});
+  document.getElementById("addCert").addEventListener("click", function(){
+    activeData().certifications.push({id:uid(),title:"",issuer:"",date:"",ref:""});
+    renderCertsList(); renderPreview(); scheduleSave();
+  });
+}
+
+function renderRefsList(){
+  var d = activeData();
+  var wrap = document.getElementById("refsList");
+  wrap.innerHTML = d.references.map(function(r,i){
+    return '<div class="item-card" data-i="'+i+'">'+
+      '<div class="item-card-head"><span class="tag">Reference '+(i+1)+'</span>'+
+        '<div class="mini-actions"><button data-act="up" '+(i===0?"disabled":"")+'>↑</button><button data-act="down" '+(i===d.references.length-1?"disabled":"")+'>↓</button><button data-act="del">✕</button></div></div>'+
+      '<div class="field"><label>Name</label><input type="text" '+bindAttr("references."+i+".name")+' value="'+esc(r.name)+'"></div>'+
+      '<div class="row2"><div class="field"><label>Title</label><input type="text" '+bindAttr("references."+i+".title")+' value="'+esc(r.title)+'"></div>'+
+      '<div class="field"><label>Company</label><input type="text" '+bindAttr("references."+i+".company")+' value="'+esc(r.company)+'"></div></div>'+
+      '<div class="row2"><div class="field"><label>Phone</label><input type="text" '+bindAttr("references."+i+".phone")+' value="'+esc(r.phone)+'"></div>'+
+      '<div class="field"><label>Email (optional)</label><input type="text" '+bindAttr("references."+i+".email")+' value="'+esc(r.email)+'"></div></div>'+
+    '</div>';
+  }).join("") + '<div class="add-row"><button class="btn btn-sm btn-primary" id="addRef">+ Add reference</button></div>' +
+  '<p class="hint">Tip: "References available upon request" is common practice too — just hide this section under Layout &amp; Template if you'+"'"+'d rather leave it off.</p>';
+  wireItemCardActions(wrap, "references", function(){});
+  document.getElementById("addRef").addEventListener("click", function(){
+    activeData().references.push({id:uid(),name:"",title:"",company:"",phone:"",email:""});
+    renderRefsList(); renderPreview(); scheduleSave();
+  });
+}
+
+function renderCustomList(){
+  var d = activeData();
+  var wrap = document.getElementById("customList");
+  wrap.innerHTML = d.custom.map(function(c,i){
+    return '<div class="item-card" data-i="'+i+'">'+
+      '<div class="item-card-head"><span class="tag">Section '+(i+1)+'</span>'+
+        '<div class="mini-actions"><button data-act="up" '+(i===0?"disabled":"")+'>↑</button><button data-act="down" '+(i===d.custom.length-1?"disabled":"")+'>↓</button><button data-act="del">✕</button></div></div>'+
+      '<div class="field"><label>Section title</label><input type="text" '+bindAttr("custom."+i+".title")+' value="'+esc(c.title)+'"></div>'+
+      '<div class="field"><label>Content (one line per bullet)</label><textarea rows="4" '+bindAttr("custom."+i+".contentText")+'>'+esc(c.contentText)+'</textarea></div>'+
+    '</div>';
+  }).join("") + '<div class="add-row"><button class="btn btn-sm btn-primary" id="addCustom">+ Add custom section</button></div>';
+  wireItemCardActions(wrap, "custom", function(){});
+  document.getElementById("addCustom").addEventListener("click", function(){
+    activeData().custom.push({id:uid(),title:"",contentText:""});
+    renderCustomList(); renderPreview(); scheduleSave();
+  });
+}
+
+function wireItemCardActions(wrap, key, extra){
+  Array.prototype.forEach.call(wrap.querySelectorAll(".item-card"), function(card){
+    var i = parseInt(card.getAttribute("data-i"),10);
+    Array.prototype.forEach.call(card.querySelectorAll("[data-act]"), function(btn){
+      var act = btn.getAttribute("data-act");
+      if(act==="up"||act==="down"||act==="del"){
+        btn.addEventListener("click", function(){
+          var arr = activeData()[key];
+          if(act==="del"){ arr.splice(i,1); }
+          else if(act==="up" && i>0){ var t=arr[i-1]; arr[i-1]=arr[i]; arr[i]=t; }
+          else if(act==="down" && i<arr.length-1){ var t2=arr[i+1]; arr[i+1]=arr[i]; arr[i]=t2; }
+          rerenderListFor(key); renderPreview(); scheduleSave();
+        });
+      } else {
+        btn.addEventListener("click", function(){ extra(activeData()[key], i, act); });
+      }
+    });
+  });
+}
+function rerenderListFor(key){
+  ({experience:renderExperienceList, education:renderEducationList, skillGroups:renderSkillsList,
+    certifications:renderCertsList, references:renderRefsList, custom:renderCustomList})[key]();
+}
+
+/* Generic input/select/textarea delegation for [data-bind] fields */
+function onEditorInputEvent(e){
+  var t = e.target;
+  var bind = t.getAttribute && t.getAttribute("data-bind");
+  if(!bind) return;
+  var d = activeData();
+  if(bind==="pageSize" || bind==="showPhoto" || bind==="photo.shape"){
+    var val = t.value;
+    if(bind==="showPhoto") val = (val==="true");
+    setPath(d, bind, val);
+    if(bind==="photo.shape") refreshPhotoDisplays();
+  } else {
+    setPath(d, bind, t.value);
+  }
+  renderPreview();
+  scheduleSave();
+  if(bind==="summary") updateSummaryHint();
+}
+
+function updateSummaryHint(){
+  var words = (activeData().summary||"").trim().split(/\s+/).filter(Boolean).length;
+  var hint = document.getElementById("summaryHint");
+  if(!hint) return;
+  if(words===0) hint.textContent = "Aim for 40–80 words covering your years of experience, top strengths and target role.";
+  else if(words<25) hint.textContent = words+" words — a little short; add a measurable achievement or two.";
+  else if(words>110) hint.textContent = words+" words — consider trimming to keep it skimmable (aim for 40–80).";
+  else hint.textContent = words+" words — good length.";
+}
+
+/* ================= PREVIEW RENDER ================= */
+var FONT_FAMILY_CONFIG = {
+  "sans-serif": {
+    b: "Arial, Helvetica, sans-serif",
+    h: "Arial, Helvetica, sans-serif"
+  },
+  "serif": {
+    b: "Georgia, 'Times New Roman', Garamond, serif",
+    h: "Georgia, 'Times New Roman', Garamond, serif"
+  },
+  "modern-mono": {
+    b: "'SF Mono', Monaco, Inconsolata, Consolas, 'Courier New', monospace",
+    h: "'SF Mono', Monaco, Inconsolata, Consolas, 'Courier New', monospace"
+  },
+  "system-ui": {
+    b: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+    h: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+  }
+};
+
+function renderPreview(){
+  var d = activeData();
+  var validIds = TEMPLATES.map(function(t){return t.id;});
+  if(!d.template || validIds.indexOf(d.template) === -1){
+    d.template = TEMPLATES[0].id;
+  }
+  var page = document.getElementById("resumePage");
+  page.className = "resume-page theme-"+d.template+" pagesize-"+d.pageSize+
+    (d.textAlign==="justify"?" justify-body":"")+
+    " spacing-"+(d.spacing||"standard");
+
+  var fontChoice = d.fontFamily || "sans-serif";
+  if(fontChoice !== "template" && FONT_FAMILY_CONFIG[fontChoice]){
+    var chosen = FONT_FAMILY_CONFIG[fontChoice];
+    page.style.setProperty("--doc-b-font", chosen.b);
+    page.style.setProperty("--doc-h-font", chosen.h);
+  } else {
+    page.style.removeProperty("--doc-b-font");
+    page.style.removeProperty("--doc-h-font");
+  }
+
+  var tplMeta = TEMPLATES.filter(function(t){return t.id===d.template;})[0] || TEMPLATES[0];
+  var frameSize = DOC_PHOTO_SIZE;
+  var photoHtml = "";
+  if(d.showPhoto && d.photo.dataUrl){
+    photoHtml = '<div class="doc-photo-slot shape-'+d.photo.shape+'" style="width:'+frameSize+'px;height:'+frameSize+'px"><img id="docHeaderPhoto"></div>';
+  }
+  var contactBits = [];
+  if(d.contact.phone) contactBits.push(esc(d.contact.phone));
+  if(d.contact.email) contactBits.push(esc(d.contact.email));
+  if(d.contact.location) contactBits.push(esc(d.contact.location));
+  if(d.contact.linkedin) contactBits.push(esc(d.contact.linkedin));
+
+  var header = "";
+  if(photoHtml || d.contact.fullName || d.contact.title || contactBits.length){
+    header =
+      '<div class="doc-header">'+
+        photoHtml+
+        '<div>'+
+        (d.contact.fullName ? '<h1 class="doc-name">'+esc(d.contact.fullName)+'</h1>' : '')+
+        (d.contact.title ? '<p class="doc-title">'+esc(d.contact.title)+'</p>' : '')+
+        (contactBits.length ? '<div class="doc-contact-line">'+contactBits.map(function(b){return "<span>"+b+"</span>";}).join('<span>·</span>')+'</div>' : '')+
+        '</div>'+
+      '</div>';
+  }
+
+  var sectionHtml = {
+    summary: d.summary ? '<div class="doc-sec"><h3 class="doc-sec-h">'+esc(getSectionTitle(d,"summary"))+'</h3><p>'+esc(d.summary)+'</p></div>' : "",
+    experience: renderExperienceSection(d),
+    education: renderEducationSection(d),
+    skills: renderSkillsSection(d),
+    certifications: renderCertsSection(d),
+    references: renderRefsSection(d),
+    custom: renderCustomSection(d)
+  };
+
+  var body;
+  if(tplMeta.layout==="linear"){
+    var flow = d.sectionsOrder.filter(function(k){return d.sectionsVisible[k];}).map(function(k){return sectionHtml[k];}).join("");
+    body = '<div class="doc-body"><div class="doc-cols"><div class="doc-col-right" style="width:100%">'+flow+'</div></div></div>';
+  } else {
+    var leftKeys = ["education","skills","certifications"].filter(function(k){return d.sectionsOrder.indexOf(k)>-1 && d.sectionsVisible[k];})
+      .sort(function(a,b){return d.sectionsOrder.indexOf(a)-d.sectionsOrder.indexOf(b);});
+    var rightKeys = ["summary","experience","references","custom"].filter(function(k){return d.sectionsOrder.indexOf(k)>-1 && d.sectionsVisible[k];})
+      .sort(function(a,b){return d.sectionsOrder.indexOf(a)-d.sectionsOrder.indexOf(b);});
+    body = '<div class="doc-body"><div class="doc-cols">'+
+      '<div class="doc-col-left">'+leftKeys.map(function(k){return sectionHtml[k];}).join("")+'</div>'+
+      '<div class="doc-col-right">'+rightKeys.map(function(k){return sectionHtml[k];}).join("")+'</div>'+
+    '</div></div>';
+  }
+
+  page.innerHTML = header + body;
+  if(d.showPhoto && d.photo.dataUrl){
+    applyPhotoToImg(document.getElementById("docHeaderPhoto"), d.photo, frameSize);
+  }
+  applyPreviewZoom();
+  ensurePageSizeStyle();
+  updateWordCount();
+  renderAtsChipOnly();
+  applyKeywordHighlight();
+  updatePreviewKwBadge();
+  updatePageIndicators();
+}
+
+function updatePageIndicators(){
+  var page = document.getElementById("resumePage");
+  var badge = document.getElementById("pageCountBadge");
+  if(!page || !badge) return;
+  var d = activeData();
+  var isLetter = d.pageSize === "letter";
+  var pageHeightMm = isLetter ? (11 * 25.4) : 297;
+  var pageWidthMm = isLetter ? (8.5 * 25.4) : 210;
+  var pxPerMm = (page.offsetWidth || 794) / pageWidthMm;
+  var singlePagePx = pageHeightMm * pxPerMm;
+  var contentHeight = page.scrollHeight;
+  var numPages = Math.max(1, Math.ceil((contentHeight - 4) / singlePagePx));
+
+  if(numPages === 1){
+    badge.textContent = "1 Page (Fits cleanly)";
+    badge.style.color = "#059669";
+  } else if(numPages === 2){
+    badge.textContent = "2 Pages (Standard)";
+    badge.style.color = "var(--ui-accent)";
+  } else {
+    badge.textContent = numPages + " Pages (Multi-page)";
+    badge.style.color = "var(--ui-accent)";
+  }
+
+  var existing = page.querySelectorAll(".doc-page-break");
+  for(var i = 0; i < existing.length; i++){ existing[i].remove(); }
+
+  if(uiPrefs.showPageGuides !== false){
+    page.classList.add("has-page-guides");
+    var totalGuides = Math.max(numPages, 1);
+    // If the content is within 25% of spilling into next page, also render next boundary guide
+    if(contentHeight > (totalGuides * singlePagePx - singlePagePx * 0.25)){
+      totalGuides++;
+    }
+    // Cap at a reasonable max to avoid runaway loops
+    totalGuides = Math.min(totalGuides, 10);
+    for(var p = 1; p <= totalGuides; p++){
+      var breakEl = document.createElement("div");
+      breakEl.className = "doc-page-break";
+      if(isLetter){
+        breakEl.style.top = (p * 11) + "in";
+      } else {
+        breakEl.style.top = (p * 297) + "mm";
+      }
+      breakEl.innerHTML = '<div class="doc-page-break-line"></div><div class="doc-page-break-badge">Page ' + p + ' End ▾</div>';
+      page.appendChild(breakEl);
+    }
+  } else {
+    page.classList.remove("has-page-guides");
+  }
+
+  var btnGuides = document.getElementById("btnToggleGuides");
+  if(btnGuides){
+    btnGuides.textContent = uiPrefs.showPageGuides !== false ? "📄 Guides: ON" : "📄 Guides: OFF";
+  }
+}
+
+function syncSpacingSelect(){
+  var d = activeData();
+  var sel = document.getElementById("selectSpacing");
+  if(sel) sel.value = d.spacing || "standard";
+}
+
+function fitToPage(targetPage){
+  var d = activeData();
+  var page = document.getElementById("resumePage");
+  if(!page) return;
+  var isLetter = d.pageSize === "letter";
+  var pageHeightMm = isLetter ? (11 * 25.4) : 297;
+  var pageWidthMm = isLetter ? (8.5 * 25.4) : 210;
+  var pxPerMm = (page.offsetWidth || 794) / pageWidthMm;
+  var singlePagePx = pageHeightMm * pxPerMm;
+
+  if(targetPage === 1){
+    d.spacing = "standard";
+    renderPreview();
+    if(page.scrollHeight <= singlePagePx + 3){
+      syncSpacingSelect();
+      scheduleSave();
+      showToast("Fits cleanly on 1 page with Standard spacing!");
+      return;
+    }
+    d.spacing = "compact";
+    renderPreview();
+    syncSpacingSelect();
+    scheduleSave();
+    if(page.scrollHeight <= singlePagePx + 5){
+      showToast("Set spacing to Compact — resume now fits cleanly on 1 page!");
+    } else {
+      var overMm = Math.round((page.scrollHeight - singlePagePx) / pxPerMm);
+      showToast("Applied Compact spacing. Still ~" + overMm + "mm over — consider trimming 1 bullet point.");
+    }
+  } else if(targetPage === 2){
+    var twoPagesPx = singlePagePx * 2;
+    if(page.scrollHeight > twoPagesPx){
+      d.spacing = "compact";
+      renderPreview();
+      syncSpacingSelect();
+      scheduleSave();
+      if(page.scrollHeight <= twoPagesPx + 5){
+        showToast("Set spacing to Compact — now fits within 2 pages!");
+      } else {
+        showToast("Applied Compact spacing. Trim slightly to fit within 2 pages.");
+      }
+    } else {
+      d.spacing = "standard";
+      renderPreview();
+      syncSpacingSelect();
+      scheduleSave();
+      showToast("Applied Standard spacing for a clean 2-page presentation.");
+    }
+  } else if(targetPage === 3){
+    var threePagesPx = singlePagePx * 3;
+    if(page.scrollHeight > threePagesPx){
+      d.spacing = "compact";
+      renderPreview();
+      syncSpacingSelect();
+      scheduleSave();
+      if(page.scrollHeight <= threePagesPx + 5){
+        showToast("Set spacing to Compact — now fits within 3 pages!");
+      } else {
+        showToast("Applied Compact spacing. Trim slightly to fit within 3 pages.");
+      }
+    } else {
+      d.spacing = "standard";
+      renderPreview();
+      syncSpacingSelect();
+      scheduleSave();
+      showToast("Applied Standard spacing for a clean 3-page presentation.");
+    }
+  }
+}
+
+function renderExperienceSection(d){
+  if(!d.experience.length) return "";
+  var html = '<div class="doc-sec"><h3 class="doc-sec-h">'+esc(getSectionTitle(d,"experience"))+'</h3>';
+  var lastGroup = "__none__";
+  d.experience.forEach(function(exp){
+    var g = exp.group || "";
+    if(g !== lastGroup){ if(g) html += '<div class="doc-group-h">'+esc(g)+'</div>'; lastGroup = g; }
+    var dateStr = esc(exp.start) + (exp.start||exp.end? " – ":"") + (exp.current?"Present":esc(exp.end));
+    html += '<div class="doc-entry"><p class="doc-sub">'+esc(exp.title)+'</p>'+
+      '<p class="doc-meta">'+esc(exp.company)+(exp.location?" · "+esc(exp.location):"")+(dateStr.trim()?" · "+dateStr:"")+'</p>'+
+      (nl2li(exp.bulletsText).length? '<ul class="doc-bullets">'+nl2li(exp.bulletsText).map(function(b){return '<li class="doc-bullet-item"><span class="doc-bullet-marker" aria-hidden="true">•</span><span class="doc-bullet-text">'+formatBulletLeadIn(b)+'</span></li>';}).join("")+'</ul>':"")+
+    '</div>';
+  });
+  return html+"</div>";
+}
+function renderEducationSection(d){
+  if(!d.education.length) return "";
+  return '<div class="doc-sec"><h3 class="doc-sec-h">'+esc(getSectionTitle(d,"education"))+'</h3>'+d.education.map(function(ed){
+    return '<div class="doc-entry"><p class="doc-sub">'+esc(ed.degree)+'</p>'+
+      '<p class="doc-meta">'+esc(ed.school)+(ed.location?" · "+esc(ed.location):"")+'</p>'+
+      '<p class="doc-meta">'+esc(ed.date)+(ed.detail?" · "+esc(ed.detail):"")+'</p></div>';
+  }).join("")+'</div>';
+}
+function renderSkillsSection(d){
+  var groups = d.skillGroups.filter(function(g){return (g.itemsText||"").trim();});
+  if(!groups.length) return "";
+  return '<div class="doc-sec"><h3 class="doc-sec-h">'+esc(getSectionTitle(d,"skills"))+'</h3>'+groups.map(function(g){
+    var items = g.itemsText.split(/,|\n/).map(function(s){return s.trim();}).filter(Boolean);
+    return '<div class="doc-entry">'+(g.label?'<p class="doc-sub" style="font-size:11.5px">'+esc(g.label)+'</p>':"")+
+      '<div class="doc-pill-list">'+items.map(function(it){return '<span class="doc-pill">'+esc(it)+'</span>';}).join("")+'</div></div>';
+  }).join("")+'</div>';
+}
+function renderCertsSection(d){
+  if(!d.certifications.length) return "";
+  return '<div class="doc-sec"><h3 class="doc-sec-h">'+esc(getSectionTitle(d,"certifications"))+'</h3>'+d.certifications.map(function(c){
+    return '<div class="doc-entry"><p class="doc-sub">'+esc(c.title)+'</p>'+
+      '<p class="doc-meta">'+esc(c.issuer)+(c.date?" · "+esc(c.date):"")+(c.ref?" · Ref: "+esc(c.ref):"")+'</p></div>';
+  }).join("")+'</div>';
+}
+function renderRefsSection(d){
+  if(!d.references.length) return "";
+  return '<div class="doc-sec"><h3 class="doc-sec-h">'+esc(getSectionTitle(d,"references"))+'</h3><div class="doc-refs-grid">'+d.references.map(function(r){
+    var lines = "";
+    if(r.title) lines += '<p class="doc-meta">'+esc(r.title)+'</p>';
+    if(r.company) lines += '<p class="doc-meta">'+esc(r.company)+'</p>';
+    if(r.phone) lines += '<p class="doc-meta">'+esc(r.phone)+'</p>';
+    if(r.email) lines += '<p class="doc-meta">'+esc(r.email)+'</p>';
+    return '<div class="doc-entry"><p class="doc-sub">'+esc(r.name)+'</p>'+lines+'</div>';
+  }).join("")+'</div></div>';
+}
+function renderCustomSection(d){
+  if(!d.custom.length) return "";
+  return d.custom.map(function(c){
+    if(!c.title && !c.contentText) return "";
+    var lines = nl2li(c.contentText);
+    return '<div class="doc-sec"><h3 class="doc-sec-h">'+esc(c.title||"Additional")+'</h3>'+
+      (lines.length? '<ul class="doc-plain-list">'+lines.map(function(l){return '<li class="doc-bullet-item"><span class="doc-bullet-marker" aria-hidden="true">•</span><span class="doc-bullet-text">'+formatBulletLeadIn(l)+'</span></li>';}).join("")+'</ul>':"")+
+    '</div>';
+  }).join("");
+}
+
+function ensurePageSizeStyle(){
+  var d = activeData();
+  var css = "@page{size:" + (d.pageSize==="letter" ? "letter" : "A4") + ";margin:1.27cm !important}";
+  var el = document.getElementById("pageSizeStyle");
+  if(!el){ el = document.createElement("style"); el.id = "pageSizeStyle"; document.head.appendChild(el); }
+  if(el.textContent !== css) el.textContent = css;
+}
+
+function applyPreviewZoom(){
+  var page = document.getElementById("resumePage");
+  page.style.transform = "scale(" + (uiPrefs.previewZoom/100) + ")";
+  page.style.marginBottom = (page.offsetHeight * (uiPrefs.previewZoom/100 - 1)) + "px";
+}
+
+function buildPlainText(d){
+  var lines = [];
+  if(d.contact.fullName) lines.push(d.contact.fullName.toUpperCase());
+  if(d.contact.title) lines.push(d.contact.title);
+  var cbits = [d.contact.phone, d.contact.email, d.contact.location, d.contact.linkedin].filter(Boolean);
+  if(cbits.length) lines.push(cbits.join(" | "));
+  if(lines.length) lines.push("");
+  var secFns = {
+    summary:function(){ if(!d.summary) return; lines.push(getSectionTitle(d,"summary").toUpperCase()); lines.push(d.summary); lines.push(""); },
+    experience:function(){
+      if(!d.experience.length) return;
+      lines.push(getSectionTitle(d,"experience").toUpperCase());
+      var lastGroup="__none__";
+      d.experience.forEach(function(exp){
+        var g = exp.group||"";
+        if(g!==lastGroup){ if(g){ lines.push(""); lines.push(g.toUpperCase()); } lastGroup=g; }
+        lines.push(exp.title+" — "+exp.company+(exp.location?" ("+exp.location+")":""));
+        var dateStr = (exp.start||"")+(exp.start||exp.end?" - ":"")+(exp.current?"Present":(exp.end||""));
+        if(dateStr.trim()) lines.push(dateStr);
+        nl2li(exp.bulletsText).forEach(function(b){ lines.push("- "+b); });
+        lines.push("");
+      });
+    },
+    education:function(){
+      if(!d.education.length) return;
+      lines.push(getSectionTitle(d,"education").toUpperCase());
+      d.education.forEach(function(ed){
+        lines.push(ed.degree+" — "+ed.school+(ed.location?" ("+ed.location+")":""));
+        lines.push([ed.date, ed.detail].filter(Boolean).join(" | "));
+        lines.push("");
+      });
+    },
+    skills:function(){
+      var groups = d.skillGroups.filter(function(g){return (g.itemsText||"").trim();});
+      if(!groups.length) return;
+      lines.push(getSectionTitle(d,"skills").toUpperCase());
+      groups.forEach(function(g){
+        var items = g.itemsText.split(/,|\n/).map(function(s){return s.trim();}).filter(Boolean);
+        lines.push((g.label?g.label+": ":"")+items.join(", "));
+      });
+      lines.push("");
+    },
+    certifications:function(){
+      if(!d.certifications.length) return;
+      lines.push(getSectionTitle(d,"certifications").toUpperCase());
+      d.certifications.forEach(function(c){ lines.push(c.title+" — "+c.issuer+(c.date?" ("+c.date+")":"")); });
+      lines.push("");
+    },
+    references:function(){
+      if(!d.references.length) return;
+      lines.push(getSectionTitle(d,"references").toUpperCase());
+      d.references.forEach(function(r){
+        lines.push(r.name);
+        if(r.title) lines.push(r.title);
+        if(r.company) lines.push(r.company);
+        if(r.phone) lines.push(r.phone);
+        if(r.email) lines.push(r.email);
+        lines.push("");
+      });
+    },
+    custom:function(){
+      d.custom.forEach(function(c){
+        if(!c.title && !c.contentText) return;
+        lines.push((c.title||getSectionTitle(d,"custom")).toUpperCase());
+        nl2li(c.contentText).forEach(function(l){ lines.push("- "+l); });
+        lines.push("");
+      });
+    }
+  };
+  d.sectionsOrder.forEach(function(k){ if(d.sectionsVisible[k]) secFns[k](); });
+  return lines.join("\n").replace(/\n{3,}/g,"\n\n").trim()+"\n";
+}
+
+/* ================= ATS CHECKER ================= */
+function tokenize(text){
+  return (text||"").toLowerCase().match(/[a-z][a-z'+-]*/g) || [];
+}
+function significantWords(text){
+  return tokenize(text).filter(function(w){ return w.length>=3 && !STOPWORDS.has(w); });
+}
+function updateWordCount(){
+  var plain = buildPlainText(activeData());
+  var wc = plain.trim().split(/\s+/).filter(Boolean).length;
+  document.getElementById("wordCountText").textContent = wc + " words";
+}
+
+function computeChecklist(d, plainText){
+  var wc = plainText.trim().split(/\s+/).filter(Boolean).length;
+  var checks = [];
+  checks.push({label:"Full name present", pass: !!d.contact.fullName});
+  checks.push({label:"Email looks valid", pass: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.contact.email||"")});
+  checks.push({label:"Phone number present", pass: (d.contact.phone||"").replace(/\D/g,"").length>=7});
+  checks.push({label:"Summary written (40+ words ideal)", pass: (d.summary||"").trim().split(/\s+/).filter(Boolean).length>=25});
+  checks.push({label:"At least one experience entry", pass: d.experience.length>0});
+  checks.push({label:"Every position has bullet points", pass: d.experience.every(function(e){return nl2li(e.bulletsText).length>0;}) });
+  checks.push({label:"Skills section filled in", pass: d.skillGroups.some(function(g){return (g.itemsText||"").trim();})});
+  checks.push({label:"Resume length reasonable ("+wc+" words; 350–900 ideal)", pass: wc>=250 && wc<=1000});
+  var currentTpl = TEMPLATES.filter(function(t){return t.id===d.template;})[0] || TEMPLATES[0];
+  checks.push({label:"Uses standard ATS-Safe single-column template (" + currentTpl.label + " ✓)", pass: currentTpl.layout==="linear"});
+  checks.push({label: d.showPhoto ? "Photo included (fine for MY/local employers; some global ATS ignore or dislike photos)" : "No photo — safest for strict ATS screening", pass: !d.showPhoto, soft:true});
+  return checks;
+}
+
+function runAtsCheck(){
+  var d = activeData();
+  var plain = buildPlainText(d);
+  var jd = document.getElementById("jdInput").value;
+  var checklist = computeChecklist(d, plain);
+  var hardChecks = checklist.filter(function(c){return !c.soft;});
+  var checklistScore = Math.round(hardChecks.filter(function(c){return c.pass;}).length / hardChecks.length * 100);
+
+  var kwResult = null;
+  if(jd && jd.trim().length>10){
+    var jdWords = significantWords(jd);
+    var freq = {};
+    jdWords.forEach(function(w){ freq[w] = (freq[w]||0)+1; });
+    var target = Object.keys(freq).sort(function(a,b){return freq[b]-freq[a];}).slice(0,30);
+    var resumeSet = new Set(significantWords(plain));
+    var matched = target.filter(function(w){return resumeSet.has(w);});
+    var missing = target.filter(function(w){return !resumeSet.has(w);});
+    var kwScore = target.length? Math.round(matched.length/target.length*100) : null;
+    kwResult = {matched:matched, missing:missing, score:kwScore};
+  }
+
+  var overall = kwResult && kwResult.score!==null ? Math.round(checklistScore*0.5 + kwResult.score*0.5) : checklistScore;
+  atsResult = {checklist:checklist, checklistScore:checklistScore, kw:kwResult, overall:overall};
+
+  if(activeHighlightedKw){
+    if(typeof activeHighlightedKw === "string"){
+      if(!kwResult || !kwResult.matched || kwResult.matched.indexOf(activeHighlightedKw.toLowerCase()) === -1){
+        activeHighlightedKw = null;
+        atsHighlightMatchCount = 0;
+      }
+    } else if(Array.isArray(activeHighlightedKw)){
+      if(kwResult && kwResult.matched && kwResult.matched.length){
+        activeHighlightedKw = kwResult.matched.slice();
+      } else {
+        activeHighlightedKw = null;
+        atsHighlightMatchCount = 0;
+      }
+    }
+  }
+
+  applyKeywordHighlight();
+  updatePreviewKwBadge();
+  renderAtsReport();
+  renderAtsChipOnly();
+}
+
+function renderAtsChipOnly(){
+  if(!atsResult) runAtsCheckSilent();
+  var val = atsResult.overall;
+  document.getElementById("atsScoreVal").textContent = val;
+  var dot = document.getElementById("atsDot");
+  dot.style.background = val>=75 ? "#2F8A5B" : val>=50 ? "#B5892E" : "#B23A3A";
+}
+function runAtsCheckSilent(){
+  var d = activeData();
+  var plain = buildPlainText(d);
+  var checklist = computeChecklist(d, plain);
+  var hardChecks = checklist.filter(function(c){return !c.soft;});
+  var checklistScore = Math.round(hardChecks.filter(function(c){return c.pass;}).length / hardChecks.length * 100);
+  atsResult = {checklist:checklist, checklistScore:checklistScore, kw:null, overall:checklistScore};
+}
+
+/* --- Resume Preview Keyword Highlighter Engine --- */
+function escapeRegExp(s){
+  return String(s).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function clearMarksFromPage(page){
+  if(!page) return;
+  var existing = page.querySelectorAll(".ats-kw-highlight");
+  if(!existing.length) return;
+  var parents = new Set();
+  for(var i = 0; i < existing.length; i++){
+    var el = existing[i];
+    var p = el.parentNode;
+    if(p){
+      p.replaceChild(document.createTextNode(el.textContent), el);
+      parents.add(p);
+    }
+  }
+  parents.forEach(function(p){
+    p.normalize();
+  });
+}
+
+function applyKeywordHighlight(){
+  var page = document.getElementById("resumePage");
+  if(!page) return null;
+
+  clearMarksFromPage(page);
+
+  if(!activeHighlightedKw){
+    atsHighlightMatchCount = 0;
+    return null;
+  }
+
+  var kwList = Array.isArray(activeHighlightedKw) ? activeHighlightedKw.slice() : [activeHighlightedKw];
+  kwList = kwList.map(function(k){ return String(k).trim(); }).filter(Boolean);
+  if(!kwList.length){
+    atsHighlightMatchCount = 0;
+    return null;
+  }
+
+  // Sort descending by length so longer words/phrases match first
+  kwList.sort(function(a, b){ return b.length - a.length; });
+
+  var patterns = kwList.map(function(k){
+    var escK = escapeRegExp(k);
+    var bStart = /^\w/.test(k) ? "\\b" : "";
+    var bEnd = /\w$/.test(k) ? "\\b" : "";
+    return bStart + escK + bEnd;
+  });
+
+  var regex;
+  try {
+    regex = new RegExp("(" + patterns.join("|") + ")", "gi");
+  } catch(e) {
+    return null;
+  }
+
+  var walker = document.createTreeWalker(page, NodeFilter.SHOW_TEXT, {
+    acceptNode: function(node){
+      if(!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+      if(node.parentNode && node.parentNode.closest && node.parentNode.closest(".doc-page-break")) return NodeFilter.FILTER_REJECT;
+      var pName = node.parentNode ? node.parentNode.nodeName.toLowerCase() : "";
+      if(pName === "script" || pName === "style" || pName === "mark") return NodeFilter.FILTER_REJECT;
+      return NodeFilter.FILTER_ACCEPT;
+    }
+  });
+
+  var textNodes = [];
+  while(walker.nextNode()){
+    textNodes.push(walker.currentNode);
+  }
+
+  var firstMatch = null;
+  var count = 0;
+
+  textNodes.forEach(function(node){
+    var text = node.nodeValue;
+    if(!text || !regex.test(text)) return;
+    regex.lastIndex = 0;
+
+    var frag = document.createDocumentFragment();
+    var lastIdx = 0;
+    var m;
+    while((m = regex.exec(text)) !== null){
+      if(m.index > lastIdx){
+        frag.appendChild(document.createTextNode(text.substring(lastIdx, m.index)));
+      }
+      var mark = document.createElement("mark");
+      mark.className = "ats-kw-highlight";
+      mark.textContent = m[0];
+      frag.appendChild(mark);
+      if(!firstMatch) firstMatch = mark;
+      count++;
+      lastIdx = regex.lastIndex;
+      if(m[0].length === 0){
+        regex.lastIndex++;
+      }
+    }
+    if(lastIdx < text.length){
+      frag.appendChild(document.createTextNode(text.substring(lastIdx)));
+    }
+    if(node.parentNode){
+      node.parentNode.replaceChild(frag, node);
+    }
+  });
+
+  atsHighlightMatchCount = count;
+  return { firstMatch: firstMatch, count: count };
+}
+
+function updatePreviewKwBadge(){
+  var badge = document.getElementById("previewKwBadge");
+  if(!badge) return;
+  if(!activeHighlightedKw){
+    badge.style.display = "none";
+    badge.innerHTML = "";
+    return;
+  }
+  var label = "";
+  if(Array.isArray(activeHighlightedKw)){
+    label = "All Matched (" + (atsHighlightMatchCount||0) + " found)";
+  } else {
+    label = '"' + activeHighlightedKw + '" (' + (atsHighlightMatchCount||0) + ' found)';
+  }
+  badge.innerHTML = '<span>Highlight: <strong>' + esc(label) + '</strong></span>' +
+    '<button type="button" id="btnBadgeClearHl" title="Clear keyword highlight">✕</button>';
+  badge.style.display = "inline-flex";
+}
+
+function toggleHighlightKeyword(kw){
+  if(!kw) return;
+  if(typeof activeHighlightedKw === "string" && activeHighlightedKw.toLowerCase() === kw.toLowerCase()){
+    activeHighlightedKw = null;
+    atsHighlightMatchCount = 0;
+  } else {
+    activeHighlightedKw = kw;
+  }
+  var result = applyKeywordHighlight();
+  atsHighlightMatchCount = result ? result.count : 0;
+  updatePreviewKwBadge();
+  renderAtsReport();
+  if(result && result.firstMatch && activeHighlightedKw){
+    try {
+      result.firstMatch.scrollIntoView({ behavior: "smooth", block: "center" });
+    } catch(e) {
+      result.firstMatch.scrollIntoView();
+    }
+  }
+}
+
+function clearKeywordHighlight(){
+  activeHighlightedKw = null;
+  atsHighlightMatchCount = 0;
+  applyKeywordHighlight();
+  updatePreviewKwBadge();
+  renderAtsReport();
+}
+
+function highlightAllKeywords(){
+  if(!atsResult || !atsResult.kw || !atsResult.kw.matched || !atsResult.kw.matched.length) return;
+  activeHighlightedKw = atsResult.kw.matched.slice();
+  var result = applyKeywordHighlight();
+  atsHighlightMatchCount = result ? result.count : 0;
+  updatePreviewKwBadge();
+  renderAtsReport();
+  if(result && result.firstMatch){
+    try {
+      result.firstMatch.scrollIntoView({ behavior: "smooth", block: "center" });
+    } catch(e) {
+      result.firstMatch.scrollIntoView();
+    }
+  }
+}
+
+function renderAtsReport(){
+  var box = document.getElementById("atsReport");
+  if(!atsResult){ box.innerHTML = '<p class="hint">Run a check to see your results here.</p>'; return; }
+  var html = '<h4>Overall score: '+atsResult.overall+'%</h4>';
+  html += '<h4>Resume health checklist</h4>';
+  atsResult.checklist.forEach(function(c){
+    var cls = c.pass ? "ok" : (c.soft ? "warn" : "bad");
+    var icon = c.pass ? "✓" : (c.soft ? "ℹ" : "✕");
+    html += '<div class="ats-check-line"><span class="ic '+cls+'">'+icon+'</span><span>'+esc(c.label)+'</span></div>';
+  });
+  if(atsResult.kw){
+    html += '<h4>Job description keyword match — '+(atsResult.kw.score!==null?atsResult.kw.score+"%":"n/a")+'</h4>';
+    if(atsResult.kw.matched.length){
+      html += '<p class="hint" style="margin:2px 0 6px">Click any matched keyword below to highlight and inspect it in the preview panel:</p>';
+      var isArrayActive = Array.isArray(activeHighlightedKw);
+      var activeStr = typeof activeHighlightedKw === "string" ? activeHighlightedKw.toLowerCase() : null;
+
+      var hlSummary = "";
+      if(isArrayActive){
+        hlSummary = 'Highlighting all matched (' + (atsHighlightMatchCount||0) + ' found in resume)';
+      } else if(activeStr){
+        hlSummary = 'Highlighting "<strong>' + esc(activeStr) + '</strong>" (' + (atsHighlightMatchCount||0) + ' found in resume)';
+      } else {
+        hlSummary = 'Click a keyword to inspect occurrences';
+      }
+
+      html += '<div class="ats-hl-bar">' +
+        '<span class="ats-hl-text">' + hlSummary + '</span>' +
+        '<div class="ats-hl-actions">' +
+          (atsResult.kw.matched.length > 1 ? '<button type="button" class="btn btn-xs ' + (isArrayActive ? 'btn-primary' : '') + '" id="btnHighlightAllAts" title="Highlight all matched keywords at once">Highlight all</button>' : '') +
+          ((activeStr || isArrayActive) ? '<button type="button" class="btn btn-xs btn-danger" id="btnClearAtsHighlight" title="Clear highlights">Clear</button>' : '') +
+        '</div>' +
+      '</div>';
+
+      html += '<div class="chips chips-interactive">' + atsResult.kw.matched.map(function(w){
+        var isThisActive = isArrayActive || (activeStr === w.toLowerCase());
+        var countBadge = (activeStr === w.toLowerCase() && atsHighlightMatchCount > 0) ? ' <span class="chip-badge">' + atsHighlightMatchCount + '</span>' : '';
+        return '<button type="button" class="chip chip-btn' + (isThisActive ? ' active-kw' : '') + '" data-kw="' + esc(w) + '" title="Click to highlight \'' + esc(w) + '\' in resume preview">' +
+          esc(w) + countBadge +
+        '</button>';
+      }).join("") + '</div>';
+    } else {
+      html += '<p class="hint">No direct keyword matches found. Review the missing keywords below to add relevant ones.</p>';
+    }
+
+    if(atsResult.kw.missing.length){
+      html += '<p class="hint" style="margin-top:10px">Consider naturally working in some of these if they genuinely apply to you:</p>';
+      html += '<div class="chips">' + atsResult.kw.missing.slice(0,20).map(function(w){return '<span class="chip miss">'+esc(w)+'</span>';}).join("") + '</div>';
+    }
+  } else {
+    html += '<p class="hint">Paste a job description above and run the check again to also see a keyword match score and click matched keywords to highlight them in the preview.</p>';
+  }
+  box.innerHTML = html;
+}
+
+/* ================= EXPORTS ================= */
+function download(filename, content, mime){
+  var blob = new Blob([content], {type:mime});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement("a");
+  a.href = url; a.download = filename; document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 2000);
+}
+function slug(s){ return (s||"resume").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"") || "resume"; }
+
+function exportPdf(){
+  var d = activeData();
+  var filename = slug(d.contact.fullName || "resume") + "-resume.pdf";
+
+  if(typeof html2pdf === "undefined"){
+    showToast("PDF library loading... please wait a moment.");
+    setTimeout(function(){
+      if(typeof html2pdf !== "undefined"){
+        exportPdf();
+      } else {
+        showToast("PDF generator unavailable. Opening print dialog...");
+        ensurePageSizeStyle();
+        window.print();
+      }
+    }, 1200);
+    return;
+  }
+
+  var page = document.getElementById("resumePage");
+  if(!page){
+    showToast("Resume page not found.");
+    return;
+  }
+
+  showToast("Generating PDF (1.27cm margins)... Please wait.");
+  setStatus("Generating PDF…", "saving");
+
+  var origTransform = page.style.transform;
+  var origMarginBottom = page.style.marginBottom;
+  var origBoxShadow = page.style.boxShadow;
+  var hadGuides = page.classList.contains("has-page-guides");
+
+  // Apply export styling: exact printable dimensions, 1.27cm consistent margins across all pages
+  page.classList.add("is-exporting-pdf");
+  page.style.transform = "none";
+  page.style.marginBottom = "0";
+  page.style.boxShadow = "none";
+  page.classList.remove("has-page-guides");
+
+  var guideEls = page.querySelectorAll(".doc-page-break");
+  for(var g = 0; g < guideEls.length; g++){
+    guideEls[g].style.display = "none";
+  }
+
+  var marks = page.querySelectorAll(".ats-kw-highlight");
+  var markRestores = [];
+  for(var m = 0; m < marks.length; m++){
+    var markEl = marks[m];
+    var textNode = document.createTextNode(markEl.textContent);
+    if(markEl.parentNode){
+      markEl.parentNode.replaceChild(textNode, markEl);
+      markRestores.push({ node: textNode, mark: markEl });
+    }
+  }
+
+  var isLetter = d.pageSize === "letter";
+  // Consistent 1.27cm (0.5in / 12.7mm) on top, left, bottom, and right for page 1, page 2, page 3, etc.
+  var marginConfig = isLetter ? [0.5, 0.5, 0.5, 0.5] : [12.7, 12.7, 12.7, 12.7];
+
+  var opt = {
+    margin: marginConfig,
+    filename: filename,
+    image: { type: "jpeg", quality: 0.98 },
+    html2canvas: {
+      scale: 2,
+      useCORS: true,
+      letterRendering: true,
+      scrollY: 0,
+      scrollX: 0,
+      logging: false
+    },
+    jsPDF: {
+      unit: isLetter ? "in" : "mm",
+      format: isLetter ? "letter" : "a4",
+      orientation: "portrait"
+    },
+    pagebreak: {
+      mode: ["css", "legacy"],
+      avoid: [".doc-entry", ".doc-sec-h", ".doc-group-h", ".doc-header"]
+    }
+  };
+
+  function restore(){
+    page.classList.remove("is-exporting-pdf");
+    page.style.transform = origTransform;
+    page.style.marginBottom = origMarginBottom;
+    page.style.boxShadow = origBoxShadow;
+    if(hadGuides) page.classList.add("has-page-guides");
+    for(var g = 0; g < guideEls.length; g++){
+      guideEls[g].style.display = "";
+    }
+    for(var r = 0; r < markRestores.length; r++){
+      var item = markRestores[r];
+      if(item.node.parentNode){
+        item.node.parentNode.replaceChild(item.mark, item.node);
+      }
+    }
+    updatePageIndicators();
+  }
+
+  try {
+    html2pdf().set(opt).from(page).save().then(function(){
+      restore();
+      showToast("PDF downloaded: " + filename);
+      setStatus("PDF downloaded", "saved");
+    }).catch(function(err){
+      restore();
+      console.error("PDF generation error:", err);
+      showToast("PDF generation issue. Opening print dialog...");
+      ensurePageSizeStyle();
+      window.print();
+    });
+  } catch(err) {
+    restore();
+    console.error("PDF generation caught error:", err);
+    showToast("PDF error. Opening print dialog...");
+    ensurePageSizeStyle();
+    window.print();
+  }
+}
+
+function exportTxt(){
+  var d = activeData();
+  download(slug(d.contact.fullName)+"-resume-ats.txt", buildPlainText(d), "text/plain");
+}
+function exportJsonFile(){
+  var d = activeData();
+  download(slug(d.contact.fullName)+"-resume-backup.json", JSON.stringify({schemaVersion:SCHEMA_VERSION, data:d}, null, 2), "application/json");
+}
+function mapJsonResume(json){
+  var base = blankData();
+  var b = json.basics || {};
+  base.contact.fullName = b.name || "";
+  base.contact.title = b.label || "";
+  base.contact.email = b.email || "";
+  base.contact.phone = b.phone || "";
+  var loc = b.location || {};
+  base.contact.location = [loc.city, loc.region || loc.countryCode].filter(Boolean).join(", ");
+  var li = (b.profiles||[]).filter(function(p){ return (p.network||"").toLowerCase().indexOf("linkedin")>-1; })[0];
+  base.contact.linkedin = li ? (li.url || li.username || "") : "";
+  base.summary = b.summary || "";
+
+  base.experience = (json.work||[]).map(function(w){
+    var bullets = (w.highlights && w.highlights.length) ? w.highlights.join("\n") : (w.summary || "");
+    return {id:uid(), group:"", title:w.position||"", company:w.name||"", location:w.location||"",
+      start:w.startDate||"", end: w.endDate||"Present", current: !w.endDate, bulletsText:bullets};
+  });
+
+  base.education = (json.education||[]).map(function(ed){
+    return {id:uid(), degree:[ed.studyType,ed.area].filter(Boolean).join(" in ") || ed.area || "", school:ed.institution||"",
+      location:"", date:[ed.startDate, ed.endDate].filter(Boolean).join(" – "), detail:ed.score||""};
+  });
+
+  base.skillGroups = (json.skills||[]).map(function(s){
+    return {id:uid(), label:s.name||"Skills", itemsText:(s.keywords||[]).join(", ")};
+  });
+  if(!base.skillGroups.length) base.skillGroups = [{id:uid(), label:"Skills", itemsText:""}];
+
+  var certs = [];
+  (json.awards||[]).forEach(function(a){ certs.push({id:uid(), title:a.title||"", issuer:a.awarder||"", date:a.date||"", ref:""}); });
+  (json.certificates||[]).forEach(function(c){ certs.push({id:uid(), title:c.name||"", issuer:c.issuer||"", date:c.date||"", ref:""}); });
+  base.certifications = certs;
+
+  base.references = (json.references||[]).map(function(r){
+    return {id:uid(), name:r.name||"", title:r.reference||"", company:"", phone:"", email:""};
+  });
+
+  return base;
+}
+function processImportedJson(parsed){
+  var data, defaultName;
+  if(!parsed || typeof parsed !== "object"){
+    alert("Invalid resume data. Expected a JSON object.");
+    return false;
+  }
+  if(parsed.basics || parsed.work || parsed.education){
+    data = mapJsonResume(parsed);
+    defaultName = "Imported (JSON Resume)";
+  } else {
+    data = parsed.data || parsed;
+    defaultName = "Imported resume";
+  }
+  if(!data || !data.contact){
+    alert("This doesn't look like a valid resume backup or JSON Resume export.");
+    return false;
+  }
+  var name = prompt("Name for this imported resume:", defaultName) || defaultName;
+  var p = {id:uid(), name:name, updatedAt:Date.now(), data:data};
+  store.profiles.push(p);
+  store.activeId = p.id;
+  persist();
+  refreshProfileSelect();
+  loadActiveIntoUI();
+  showToast('Imported "' + name + '" successfully!');
+  if(defaultName==="Imported (JSON Resume)"){
+    alert("Imported from JSON Resume format. References (if any) may need a quick check — that format doesn't include phone/company for references, so those fields were left blank.");
+  }
+  return true;
+}
+function importJsonFile(file){
+  var reader = new FileReader();
+  reader.onload = function(e){
+    try{
+      var parsed = JSON.parse(e.target.result);
+      processImportedJson(parsed);
+    }catch(err){
+      alert("Couldn't read that file — is it a valid backup .json or JSON Resume export?");
+    }
+  };
+  reader.readAsText(file);
+}
+
+/* ================= PROFILE MANAGEMENT ================= */
+function refreshProfileSelect(){
+  var sel = document.getElementById("profileSelect");
+  sel.innerHTML = store.profiles.map(function(p){
+    var isCurDirty = (p.id === store.activeId && isDirtyState);
+    return '<option value="'+p.id+'" '+(p.id===store.activeId?"selected":"")+'>'+esc(p.name + (isCurDirty ? " *" : ""))+'</option>';
+  }).join("");
+  var dirtyEl = document.getElementById("dirtyIndicator");
+  if(dirtyEl){
+    dirtyEl.classList.toggle("show", isDirtyState);
+  }
+}
+function loadActiveIntoUI(){
+  var d = activeData();
+  setDirty(false);
+  clampPhoto(d.photo);
+
+  Array.prototype.forEach.call(document.querySelectorAll("[data-bind]"), function(el){
+    var path = el.getAttribute("data-bind");
+    if(!path) return;
+    var val = getPath(d, path);
+    if(el.tagName === "INPUT" && el.type === "checkbox"){
+      el.checked = !!val;
+    } else if(el.tagName === "SELECT"){
+      if(val !== undefined) el.value = String(val);
+    } else if(el.tagName === "INPUT" || el.tagName === "TEXTAREA"){
+      el.value = (val != null ? val : "");
+    }
+  });
+  syncSpacingSelect();
+
+  document.querySelector('select[data-bind="pageSize"]').value = d.pageSize;
+  document.querySelector('select[data-bind="showPhoto"]').value = String(d.showPhoto);
+  document.querySelector('select[data-bind="textAlign"]').value = d.textAlign || "left";
+  var fontSel = document.querySelector('select[data-bind="fontFamily"]');
+  if(fontSel) fontSel.value = d.fontFamily || "sans-serif";
+  document.querySelector('select[data-bind="photo.shape"]').value = d.photo.shape;
+  document.getElementById("zoomSlider").value = Math.round((d.photo.zoom||1)*100);
+  document.getElementById("jdInput").value = "";
+  atsResult = null;
+  activeHighlightedKw = null;
+  atsHighlightMatchCount = 0;
+  updatePreviewKwBadge();
+  renderTemplateGrid();
+  renderSectionToggles();
+  renderExperienceList();
+  renderEducationList();
+  renderSkillsList();
+  renderCertsList();
+  renderRefsList();
+  renderCustomList();
+  updateSummaryHint();
+  refreshPhotoDisplays();
+  renderAtsReport();
+  renderPreview();
+}
+
+/* ================= SYSTEM PRINT PREPARATION ================= */
+var printState = null;
+function prepareForPrint(){
+  ensurePageSizeStyle();
+  var page = document.getElementById("resumePage");
+  if(!page) return null;
+  var origTransform = page.style.transform;
+  var origMarginBottom = page.style.marginBottom;
+  var origBoxShadow = page.style.boxShadow;
+  var hadGuides = page.classList.contains("has-page-guides");
+
+  page.classList.add("is-system-printing");
+  page.style.transform = "none";
+  page.style.marginBottom = "0";
+  page.style.boxShadow = "none";
+  page.classList.remove("has-page-guides");
+
+  var guideEls = page.querySelectorAll(".doc-page-break");
+  for(var g = 0; g < guideEls.length; g++){
+    guideEls[g].style.display = "none";
+  }
+  var toast = document.getElementById("toastMsg");
+  if(toast) toast.style.display = "none";
+
+  return {
+    origTransform: origTransform,
+    origMarginBottom: origMarginBottom,
+    origBoxShadow: origBoxShadow,
+    hadGuides: hadGuides,
+    guideEls: guideEls,
+    toast: toast
+  };
+}
+
+function restoreAfterPrint(state){
+  var page = document.getElementById("resumePage");
+  if(!page) return;
+  page.classList.remove("is-system-printing");
+  if(state){
+    page.style.transform = state.origTransform || "";
+    page.style.marginBottom = state.origMarginBottom || "";
+    page.style.boxShadow = state.origBoxShadow || "";
+    if(state.hadGuides) page.classList.add("has-page-guides");
+    if(state.guideEls){
+      for(var g = 0; g < state.guideEls.length; g++){
+        state.guideEls[g].style.display = "";
+      }
+    }
+    if(state.toast) state.toast.style.display = "";
+  }
+  applyPreviewZoom();
+  updatePageIndicators();
+}
+
+function executePrint(){
+  if(printState){ restoreAfterPrint(printState); }
+  printState = prepareForPrint();
+  setTimeout(function(){
+    window.print();
+    setTimeout(function(){
+      if(printState){
+        restoreAfterPrint(printState);
+        printState = null;
+      }
+    }, 800);
+  }, 40);
+}
+
+/* ================= WIRING ================= */
+function wireStatic(){
+  document.getElementById("editorPanel").addEventListener("input", onEditorInputEvent);
+  document.getElementById("editorPanel").addEventListener("change", onEditorInputEvent);
+
+  document.getElementById("profileSelect").addEventListener("change", function(e){
+    if(isDirtyState){ saveNow(); }
+    store.activeId = e.target.value; persist(); loadActiveIntoUI();
+  });
+  document.getElementById("btnNewProfile").addEventListener("click", function(){
+    var name = prompt("Name for the new resume:", "New resume"); if(!name) return;
+    var p = {id:uid(), name:name, updatedAt:Date.now(), data:blankData()};
+    store.profiles.push(p); store.activeId = p.id; persist();
+    refreshProfileSelect(); loadActiveIntoUI();
+  });
+  document.getElementById("btnDupProfile").addEventListener("click", function(){
+    var cur = activeProfile();
+    var defaultName = cur.name + " (Tailored)";
+    var name = prompt("Name for tailored / duplicated resume:", defaultName);
+    if(!name) return;
+    var p = {id:uid(), name:name, updatedAt:Date.now(), data:JSON.parse(JSON.stringify(cur.data))};
+    store.profiles.push(p); store.activeId = p.id; persist();
+    refreshProfileSelect(); loadActiveIntoUI();
+    showToast("Cloned resume: " + name);
+  });
+  document.getElementById("btnRenProfile").addEventListener("click", function(){
+    var cur = activeProfile();
+    var name = prompt("Rename resume:", cur.name); if(!name) return;
+    cur.name = name; persist(); refreshProfileSelect();
+  });
+  document.getElementById("btnDelProfile").addEventListener("click", function(){
+    if(store.profiles.length<=1){ alert("You need at least one resume — create another before deleting this one."); return; }
+    if(!confirm("Delete \""+activeProfile().name+"\"? This can't be undone (export a backup first if unsure).")) return;
+    var idx = store.profiles.findIndex(function(p){return p.id===store.activeId;});
+    store.profiles.splice(idx,1);
+    store.activeId = store.profiles[Math.max(0,idx-1)].id;
+    persist(); refreshProfileSelect(); loadActiveIntoUI();
+  });
+
+  // Fit and guide buttons
+  var btnFit1 = document.getElementById("btnFit1");
+  if(btnFit1) btnFit1.addEventListener("click", function(){ fitToPage(1); });
+  var btnFit2 = document.getElementById("btnFit2");
+  if(btnFit2) btnFit2.addEventListener("click", function(){ fitToPage(2); });
+  var btnFit3 = document.getElementById("btnFit3");
+  if(btnFit3) btnFit3.addEventListener("click", function(){ fitToPage(3); });
+  var btnTbFit1 = document.getElementById("btnTbFit1");
+  if(btnTbFit1) btnTbFit1.addEventListener("click", function(){ fitToPage(1); });
+  var btnTbFit2 = document.getElementById("btnTbFit2");
+  if(btnTbFit2) btnTbFit2.addEventListener("click", function(){ fitToPage(2); });
+  var btnTbFit3 = document.getElementById("btnTbFit3");
+  if(btnTbFit3) btnTbFit3.addEventListener("click", function(){ fitToPage(3); });
+
+  var btnToggleGuides = document.getElementById("btnToggleGuides");
+  if(btnToggleGuides){
+    btnToggleGuides.addEventListener("click", function(){
+      uiPrefs.showPageGuides = !(uiPrefs.showPageGuides !== false);
+      persistUiPrefs();
+      updatePageIndicators();
+      showToast(uiPrefs.showPageGuides !== false ? "Page boundary guides ON" : "Page boundary guides OFF");
+    });
+  }
+
+  document.getElementById("btnSaveNow").addEventListener("click", saveNow);
+  document.addEventListener("keydown", function(e){
+    if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==="s"){ e.preventDefault(); saveNow(); }
+  });
+
+  // Direct Import, Export (Backup), and Download as PDF buttons
+  var btnImport = document.getElementById("btnImport");
+  var jsonFileInput = document.getElementById("jsonFileInput");
+  if(btnImport && jsonFileInput){
+    btnImport.addEventListener("click", function(){
+      jsonFileInput.click();
+    });
+  }
+
+  // Export button directly triggers the backup function
+  var btnExport = document.getElementById("btnExport");
+  if(btnExport){
+    btnExport.addEventListener("click", exportJsonFile);
+  }
+
+  // Download as PDF (separated button)
+  var btnExpPdf = document.getElementById("expPdf");
+  if(btnExpPdf){
+    btnExpPdf.addEventListener("click", exportPdf);
+  }
+
+  document.getElementById("bannerExport").addEventListener("click", exportJsonFile);
+
+  // Import file handler
+  jsonFileInput.addEventListener("change", function(e){
+    if(e.target.files[0]) importJsonFile(e.target.files[0]);
+    e.target.value = "";
+  });
+
+  document.addEventListener("keydown", function(e){
+    // Global shortcut handlers if needed
+  });
+
+  // Drag and drop .json file to import directly into the app
+  window.addEventListener("dragover", function(e){
+    if(e.dataTransfer && e.dataTransfer.types && Array.prototype.indexOf.call(e.dataTransfer.types, "Files") !== -1){
+      e.preventDefault();
+    }
+  });
+  window.addEventListener("drop", function(e){
+    if(e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length){
+      var file = e.dataTransfer.files[0];
+      if(file && (file.type === "application/json" || file.name.toLowerCase().endsWith(".json"))){
+        e.preventDefault();
+        importJsonFile(file);
+      }
+    }
+  });
+
+  document.getElementById("btnAtsCheck").addEventListener("click", runAtsCheck);
+
+  document.getElementById("atsReport").addEventListener("click", function(e){
+    var chip = e.target.closest("[data-kw]");
+    if(chip){
+      var kw = chip.getAttribute("data-kw");
+      toggleHighlightKeyword(kw);
+      return;
+    }
+    if(e.target.closest("#btnClearAtsHighlight")){
+      clearKeywordHighlight();
+      return;
+    }
+    if(e.target.closest("#btnHighlightAllAts")){
+      highlightAllKeywords();
+      return;
+    }
+  });
+
+  var badgeEl = document.getElementById("previewKwBadge");
+  if(badgeEl){
+    badgeEl.addEventListener("click", function(e){
+      clearKeywordHighlight();
+    });
+  }
+
+  document.getElementById("btnUiTheme").addEventListener("click", function(){
+    uiPrefs.theme = uiPrefs.theme==="dark" ? "light" : "dark";
+    document.body.setAttribute("data-ui", uiPrefs.theme);
+    document.documentElement.setAttribute("data-theme", uiPrefs.theme);
+    document.documentElement.setAttribute("data-ui", uiPrefs.theme);
+    persistUiPrefs();
+    updateThemeButton();
+  });
+  document.getElementById("previewZoom").addEventListener("input", function(e){
+    uiPrefs.previewZoom = parseInt(e.target.value,10); applyPreviewZoom(); persistUiPrefs();
+  });
+
+  window.addEventListener("beforeprint", function(){
+    if(!printState){
+      printState = prepareForPrint();
+    }
+  });
+  window.addEventListener("afterprint", function(){
+    if(printState){
+      restoreAfterPrint(printState);
+      printState = null;
+    } else {
+      applyPreviewZoom();
+    }
+  });
+
+  window.addEventListener("beforeunload", function(e){
+    if(isDirtyState){
+      e.preventDefault();
+      e.returnValue = "";
+    }
+  });
+}
+
+/* ================= INIT ================= */
+
+  // Tab switching between Content, Design, and ATS
+  function setupTabs() {
+    var tabBtns = [
+      document.getElementById("tabContentBtn"),
+      document.getElementById("tabDesignBtn"),
+      document.getElementById("tabAtsBtn")
+    ];
+    var tabPanels = [
+      document.getElementById("panelContent"),
+      document.getElementById("panelDesign"),
+      document.getElementById("panelAts")
+    ];
+    function selectTab(idx) {
+      for(var i=0; i<tabBtns.length; i++){
+        if(tabBtns[i]) {
+          tabBtns[i].classList.toggle("on", i === idx);
+          tabBtns[i].setAttribute("aria-selected", i === idx ? "true" : "false");
+        }
+        if(tabPanels[i]) {
+          tabPanels[i].style.display = i === idx ? "block" : "none";
+        }
+      }
+    }
+    for(var t=0; t<tabBtns.length; t++){
+      (function(index){
+        if(tabBtns[index]){
+          tabBtns[index].addEventListener("click", function(){ selectTab(index); });
+          tabBtns[index].addEventListener("keydown", function(e){
+            if(e.key==="Enter" || e.key===" "){ e.preventDefault(); selectTab(index); }
+          });
+        }
+      })(t);
+    }
+    var atsChip = document.getElementById("atsChip");
+    if(atsChip){
+      atsChip.style.cursor = "pointer";
+      atsChip.addEventListener("click", function(){ selectTab(2); });
+    }
+    selectTab(0);
+  }
+
+  function updateThemeButton(){
+    var btn = document.getElementById("btnUiTheme");
+    if(!btn) return;
+    var isDark = (uiPrefs.theme !== "light");
+    btn.textContent = isDark ? "🌙" : "☀️";
+    btn.title = isDark ? "Current: Dark theme (Click for Light theme)" : "Current: Light theme (Click for Dark theme)";
+    btn.setAttribute("aria-label", btn.title);
+  }
+
+function init(){
+  loadStore();
+  loadUiPrefs();
+  document.body.setAttribute("data-ui", uiPrefs.theme);
+  document.documentElement.setAttribute("data-theme", uiPrefs.theme);
+  document.documentElement.setAttribute("data-ui", uiPrefs.theme);
+  document.getElementById("previewZoom").value = uiPrefs.previewZoom;
+  updateThemeButton();
+  updateBanner();
+  refreshProfileSelect();
+  wireStatic();
+  initPhotoAdjuster();
+  setupTabs();
+  loadActiveIntoUI();
+  var initTime = new Date().toLocaleTimeString([], {hour:"numeric", minute:"2-digit"});
+  setStatus(storageAvailable ? ("Saved " + initTime) : "Storage unavailable — export to save", storageAvailable ? "saved" : "dirty");
+}
+
+document.addEventListener("DOMContentLoaded", init);
+})();
+
+</script>
+</body>
+</html>

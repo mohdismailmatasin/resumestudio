@@ -1,0 +1,17 @@
+{
+  "name": "resume-studio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Interactive resume builder with live preview, ATS scoring, and export options",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node server.js",
+    "build": "mkdir -p dist && cp index.html dist/index.html && (cp -r vendor dist/ 2>/dev/null || true)",
+    "start": "node server.js",
+    "lint": "node --check server.js",
+    "export-md": "node export-md.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}

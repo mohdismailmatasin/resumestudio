@@ -1,0 +1,7 @@
+{
+  "name": "Resume Studio",
+  "description": "Privacy-first, client-side interactive resume builder with ATS-safe templates, live preview, 1.27cm margin PDF export, ATS keyword check, and dark mode.",
+  "license": "MIT",
+  "licenseFile": "LICENSE",
+  "type": "static-web-app"
+}
